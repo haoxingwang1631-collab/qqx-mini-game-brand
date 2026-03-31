@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QQ媒体 × 微信小游戏 — 品牌效果售卖工作流</title>
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: #F8FBFF;
+  color: #1a1a2e;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* ===== Color System — QQ蓝战略风格 ===== */
+:root {
+  --brand-primary: #12B7F5;
+  --brand-secondary: #5B6FFF;
+  --brand-purple: #8B5CF6;
+  --brand-gold: #FFB800;
+  --brand-pink: #FF6B9D;
+  --brand-green: #00D4AA;
+  --brand-gradient: linear-gradient(135deg, #12B7F5, #5B6FFF);
+  --brand-gradient-wide: linear-gradient(135deg, #12B7F5, #5B6FFF, #8B5CF6);
+  --brand-light: #EBF8FF;
+  --text-primary: #1a1a2e;
+  --text-secondary: #555770;
+  --text-tertiary: #8889a0;
+  --bg-white: #ffffff;
+  --bg-page: #F8FBFF;
+  --bg-dark: #0E1A2B;
+  --border: #E2E8F0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --shadow-brand: 0 8px 30px rgba(18,183,245,0.2);
+  --radius: 20px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+}
+
+/* ===== Cover ===== */
+.cover {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0B8AD9 0%, #12B7F5 20%, #3A7BF5 45%, #5B6FFF 70%, #7C5CF6 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 24px;
+  position: relative;
+  overflow: hidden;
+}
+/* Soft light overlays */
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -20%;
+  width: 160%; height: 160%;
+  background: radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.12) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 60%, rgba(255,255,255,0.08) 0%, transparent 45%),
+              radial-gradient(ellipse at 50% 90%, rgba(91,111,255,0.2) 0%, transparent 40%);
+  animation: coverGlow 12s ease-in-out infinite alternate;
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to top, rgba(91,111,255,0.3), transparent);
+  z-index: 0;
+}
+@keyframes coverGlow {
+  0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+  100% { transform: translate(-2%, 2%) scale(1.08); opacity: 1; }
+}
+
+/* QQ Penguin + decorative elements */
+.cover-decor {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+/* QQ Penguin brand image — right side */
+.penguin-silhouette {
+  position: absolute;
+  right: 3%;
+  bottom: 5%;
+  width: 280px;
+  height: auto;
+  opacity: 0.18;
+  filter: drop-shadow(0 0 40px rgba(255,255,255,0.15));
+  animation: penguinFloat 8s ease-in-out infinite alternate;
+}
+.penguin-fallback { display: none; }
+@keyframes penguinFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-14px) rotate(1deg); }
+}
+/* Colorful bubbles — lighter for blue bg */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  animation: bubbleFloat 10s infinite;
+}
+.bubble:nth-child(1) { width: 200px; height: 200px; left: -5%; top: 10%; background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%); animation-duration: 14s; }
+.bubble:nth-child(2) { width: 140px; height: 140px; right: 10%; top: 5%; background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%); animation-duration: 11s; animation-delay: 2s; }
+.bubble:nth-child(3) { width: 100px; height: 100px; left: 22%; bottom: 12%; background: radial-gradient(circle, rgba(255,184,0,0.12), transparent 70%); animation-duration: 13s; animation-delay: 4s; }
+.bubble:nth-child(4) { width: 160px; height: 160px; right: 28%; bottom: 8%; background: radial-gradient(circle, rgba(255,255,255,0.07), transparent 70%); animation-duration: 15s; animation-delay: 1s; }
+.bubble:nth-child(5) { width: 80px; height: 80px; left: 42%; top: 8%; background: radial-gradient(circle, rgba(255,107,157,0.1), transparent 70%); animation-duration: 9s; animation-delay: 3s; }
+@keyframes bubbleFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(10px, -15px) scale(1.05); }
+  50% { transform: translate(-5px, -25px) scale(1); }
+  75% { transform: translate(8px, -10px) scale(0.97); }
+}
+/* Star sparkles — white on blue */
+.star {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  animation: starTwinkle 3s infinite;
+}
+.star::before, .star::after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+.star::before { width: 14px; height: 2px; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; }
+.star::after { width: 2px; height: 14px; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; }
+.star:nth-child(6) { left: 10%; top: 20%; animation-delay: 0s; }
+.star:nth-child(7) { left: 75%; top: 15%; animation-delay: 1s; animation-duration: 4s; }
+.star:nth-child(8) { left: 50%; top: 78%; animation-delay: 2s; animation-duration: 3.5s; }
+.star:nth-child(9) { left: 28%; top: 65%; animation-delay: 0.5s; animation-duration: 2.5s; }
+.star:nth-child(10) { left: 85%; top: 50%; animation-delay: 1.5s; }
+.star:nth-child(11) { left: 60%; top: 25%; animation-delay: 2.5s; animation-duration: 4s; }
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 0.8; transform: scale(1.3); }
+}
+/* Small decorative shapes */
+.deco-icon {
+  position: absolute;
+  opacity: 0.08;
+  font-size: 48px;
+  animation: decoFloat 12s ease-in-out infinite;
+}
+.deco-icon:nth-child(12) { left: 4%; top: 42%; animation-delay: 0s; font-size: 32px; }
+.deco-icon:nth-child(13) { right: 5%; top: 32%; animation-delay: 3s; font-size: 36px; }
+.deco-icon:nth-child(14) { left: 18%; bottom: 18%; animation-delay: 5s; font-size: 28px; }
+@keyframes decoFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+.cover-content { position: relative; z-index: 1; max-width: 900px; }
+.cover-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(8px);
+}
+.cover h1 {
+  font-size: clamp(36px, 5.5vw, 60px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+}
+.cover h1 .gradient-text {
+  background: linear-gradient(135deg, #FFE066, #FFB800, #FF8C00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cover-subtitle {
+  font-size: 18px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 48px;
+  line-height: 1.7;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cover-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.cover-stat {
+  text-align: center;
+}
+.cover-stat .num {
+  font-size: 40px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+}
+.cover-stat .label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.cover-scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.3);
+  font-size: 12px;
+  letter-spacing: 2px;
+  animation: scrollBounce 2s infinite;
+}
+.scroll-arrow {
+  width: 24px; height: 24px;
+  border-right: 2px solid rgba(255,255,255,0.3);
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+  transform: rotate(45deg);
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ===== Navigation Bar ===== */
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 0 24px;
+  transition: box-shadow 0.3s;
+}
+.nav-bar.scrolled {
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 10px 0;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-logo {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand-primary);
+  white-space: nowrap;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+.nav-link {
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.nav-link:hover { background: var(--brand-light); color: var(--brand-primary); }
+.nav-link.active { background: var(--brand-primary); color: #fff; }
+
+/* ===== Main ===== */
+.main { max-width: 1200px; margin: 0 auto; padding: 64px 24px 80px; }
+
+/* ===== Section ===== */
+.section { margin-bottom: 80px; }
+.section-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+.section-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-primary);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+.section-desc {
+  font-size: 16px;
+  color: var(--text-tertiary);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ===== Three Phases ===== */
+.phases-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.phase-card {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  padding: 36px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.phase-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.phase-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.phase-card:nth-child(1)::before { background: linear-gradient(90deg, #12B7F5, #5B6FFF); }
+.phase-card:nth-child(2)::before { background: linear-gradient(90deg, #5B6FFF, #8B5CF6); }
+.phase-card:nth-child(3)::before { background: linear-gradient(90deg, #8B5CF6, #FF6B9D); }
+.phase-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.phase-num {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.phase-card:nth-child(1) .phase-num { background: linear-gradient(135deg, #12B7F5, #5B6FFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.phase-card:nth-child(2) .phase-num { background: linear-gradient(135deg, #5B6FFF, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.phase-card:nth-child(3) .phase-num { background: linear-gradient(135deg, #8B5CF6, #FF6B9D); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.phase-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.phase-subtitle {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin-bottom: 20px;
+}
+.phase-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.phase-module-tag {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--brand-light);
+  color: var(--brand-primary);
+  transition: all 0.2s;
+}
+.phase-module-tag:hover {
+  background: var(--brand-primary);
+  color: #fff;
+  transform: scale(1.03);
+}
+
+/* ===== Flow Chart ===== */
+.flow-container {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  padding: 48px 32px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow-x: auto;
+}
+.flow-chart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-width: 1000px;
+  padding: 20px 0;
+  position: relative;
+}
+.flow-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s;
+  position: relative;
+  z-index: 2;
+}
+.flow-node:hover { transform: translateY(-6px); }
+.flow-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s, transform 0.3s;
+  position: relative;
+}
+.flow-node:hover .flow-icon {
+  box-shadow: 0 8px 24px rgba(18,183,245,0.25);
+  transform: scale(1.08);
+}
+.flow-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  max-width: 80px;
+  line-height: 1.3;
+}
+.flow-freq {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  flex-shrink: 0;
+  color: var(--brand-primary);
+  font-size: 18px;
+  opacity: 0.5;
+  position: relative;
+  z-index: 1;
+}
+.flow-arrow svg {
+  width: 32px;
+  height: 16px;
+}
+
+/* Flow node colors */
+.flow-icon.m1 { background: linear-gradient(135deg, #12B7F5, #3DC2F7); color: #fff; }
+.flow-icon.m2 { background: linear-gradient(135deg, #5B6FFF, #7B8FFF); color: #fff; }
+.flow-icon.m3 { background: linear-gradient(135deg, #8B5CF6, #A07DFF); color: #fff; }
+.flow-icon.m4 { background: linear-gradient(135deg, #FF6B9D, #FF8FB8); color: #fff; }
+.flow-icon.m5 { background: linear-gradient(135deg, #FFB800, #FFCC40); color: #fff; }
+.flow-icon.m6 { background: linear-gradient(135deg, #00D4AA, #2DDDBA); color: #fff; }
+.flow-icon.m7 { background: linear-gradient(135deg, #F97316, #FB923C); color: #fff; }
+.flow-icon.m8 { background: linear-gradient(135deg, #EC4899, #F472B6); color: #fff; }
+.flow-icon svg.fi { width: 28px; height: 28px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Feedback loop line */
+.flow-feedback {
+  position: absolute;
+  bottom: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.feedback-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px;
+  background: rgba(18,183,245,0.06);
+  border-radius: 100px;
+  border: 1px dashed rgba(18,183,245,0.25);
+}
+.feedback-line span {
+  font-size: 11px;
+  color: var(--brand-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.feedback-arrow {
+  font-size: 14px;
+  color: var(--brand-primary);
+  opacity: 0.6;
+}
+
+/* ===== Module Cards Grid ===== */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.module-card {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-brand);
+}
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.module-card:hover::before { opacity: 1; }
+.module-card[data-module="m1"]::before { background: linear-gradient(90deg, #12B7F5, #3DC2F7); }
+.module-card[data-module="m2"]::before { background: linear-gradient(90deg, #5B6FFF, #7B8FFF); }
+.module-card[data-module="m3"]::before { background: linear-gradient(90deg, #8B5CF6, #A07DFF); }
+.module-card[data-module="m4"]::before { background: linear-gradient(90deg, #FF6B9D, #FF8FB8); }
+.module-card[data-module="m5"]::before { background: linear-gradient(90deg, #FFB800, #FFCC40); }
+.module-card[data-module="m6"]::before { background: linear-gradient(90deg, #00D4AA, #2DDDBA); }
+.module-card[data-module="m7"]::before { background: linear-gradient(90deg, #F97316, #FB923C); }
+.module-card[data-module="m8"]::before { background: linear-gradient(90deg, #EC4899, #F472B6); }
+
+.module-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.module-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.module-card[data-module="m1"] .module-card-icon { background: linear-gradient(135deg, #12B7F5, #3DC2F7); color: #fff; }
+.module-card[data-module="m2"] .module-card-icon { background: linear-gradient(135deg, #5B6FFF, #7B8FFF); color: #fff; }
+.module-card[data-module="m3"] .module-card-icon { background: linear-gradient(135deg, #8B5CF6, #A07DFF); color: #fff; }
+.module-card[data-module="m4"] .module-card-icon { background: linear-gradient(135deg, #FF6B9D, #FF8FB8); color: #fff; }
+.module-card[data-module="m5"] .module-card-icon { background: linear-gradient(135deg, #FFB800, #FFCC40); color: #fff; }
+.module-card[data-module="m6"] .module-card-icon { background: linear-gradient(135deg, #00D4AA, #2DDDBA); color: #fff; }
+.module-card[data-module="m7"] .module-card-icon { background: linear-gradient(135deg, #F97316, #FB923C); color: #fff; }
+.module-card[data-module="m8"] .module-card-icon { background: linear-gradient(135deg, #EC4899, #F472B6); color: #fff; }
+
+.module-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.module-card-freq {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.module-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.module-card-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.module-kpi-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  background: #f0f4f8;
+  color: var(--text-secondary);
+}
+.module-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f2f5;
+}
+.module-card-owner {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.module-card-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f0f4f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.module-card:hover .module-card-arrow {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+/* ===== Rhythm Table ===== */
+.rhythm-table-wrap {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+.rhythm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.rhythm-table thead th {
+  background: var(--brand-gradient);
+  color: #fff;
+  padding: 16px 20px;
+  font-weight: 600;
+  text-align: left;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+.rhythm-table tbody td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f0f2f5;
+  color: var(--text-secondary);
+}
+.rhythm-table tbody tr:last-child td { border-bottom: none; }
+.rhythm-table tbody tr:hover { background: #f8fafc; }
+.freq-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.freq-badge.weekly { background: #EBF8FF; color: #12B7F5; }
+.freq-badge.biweekly { background: #EDE9FE; color: #8B5CF6; }
+.freq-badge.monthly { background: #ECFDF5; color: #059669; }
+.freq-badge.quarterly { background: #FFF7ED; color: #EA580C; }
+.freq-badge.realtime { background: #FEF3C7; color: #D97706; }
+.freq-badge.ondemand { background: #FFE4EC; color: #E11D63; }
+
+/* ===== Data Flow Section ===== */
+.dataflow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.dataflow-card {
+  background: var(--bg-white);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s;
+}
+.dataflow-card:hover { transform: translateY(-2px); }
+.dataflow-from, .dataflow-to {
+  text-align: center;
+  min-width: 60px;
+}
+.dataflow-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+.dataflow-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+.dataflow-content {
+  flex: 1;
+}
+.dataflow-output {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.dataflow-usage {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.dataflow-arrow-mid {
+  font-size: 16px;
+  color: var(--brand-primary);
+  opacity: 0.5;
+}
+
+/* ===== Role Matrix ===== */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.role-card {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.role-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.role-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+}
+.role-avatar.ops { background: linear-gradient(135deg, #12B7F5, #5B6FFF); }
+.role-avatar.sales { background: linear-gradient(135deg, #FFB800, #F97316); }
+.role-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.role-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+.role-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.role-module-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.role-module-tag.lead { background: rgba(18,183,245,0.1); color: #12B7F5; }
+.role-module-tag.support { background: #f0f4f8; color: var(--text-tertiary); }
+
+/* ===== Footer ===== */
+.footer {
+  background: var(--bg-dark);
+  padding: 48px 24px;
+  text-align: center;
+}
+.footer-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.footer-brand {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 8px;
+}
+.footer-meta {
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.7;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .phases-grid { grid-template-columns: 1fr; }
+  .role-grid { grid-template-columns: 1fr; }
+  .cover-stats { gap: 24px; }
+  .cover-stat .num { font-size: 32px; }
+  .section-title { font-size: 24px; }
+  .modules-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== Scroll Animations ===== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- ===== COVER ===== -->
+<section class="cover">
+  <!-- Decorative Layer -->
+  <div class="cover-decor">
+    <!-- Colorful bubbles -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <!-- Star sparkles -->
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <!-- Subtle game deco icons -->
+    <div class="deco-icon">🎮</div>
+    <div class="deco-icon">⭐</div>
+    <div class="deco-icon">🚀</div>
+    <!-- QQ Brand Penguin (official image) -->
+    <img class="penguin-silhouette" src="https://qzonestyle.gtimg.cn/qzone/qzact/act/external/tiqq/logo_b.png" alt="QQ" onerror="this.style.display='none'"/>
+    <!-- Fallback: secondary QQ penguin source -->
+    <img class="penguin-fallback" src="https://im.qq.com/assets/images/qqlogo.png" alt="" style="display:none;" onerror="this.style.display='none'"/>
+  </div>
+  <div class="cover-content">
+    <div class="cover-badge">Workflow Visualization</div>
+    <h1>QQ媒体 × 微信小游戏<br><span class="gradient-text">品牌效果售卖工作流</span></h1>
+    <p class="cover-subtitle">8大模块闭环驱动的商业化运营作战系统<br>从情报洞察到案例沉淀，全链路数字化管理</p>
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="num">8</div>
+        <div class="label">核心模块</div>
+      </div>
+      <div class="cover-stat">
+        <div class="num">3</div>
+        <div class="label">核心阶段</div>
+      </div>
+      <div class="cover-stat">
+        <div class="num">7</div>
+        <div class="label">配套模板</div>
+      </div>
+      <div class="cover-stat">
+        <div class="num">4</div>
+        <div class="label">竞媒报告</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-scroll-hint">
+    <span>向下探索</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="nav-bar" id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">QQ×小游戏 工作流</div>
+    <a href="#overview" class="nav-link active">全局总览</a>
+    <a href="#flowchart" class="nav-link">流程图</a>
+    <a href="#modules" class="nav-link">模块详情</a>
+    <a href="#dataflow" class="nav-link">数据流转</a>
+    <a href="#rhythm" class="nav-link">执行节奏</a>
+    <a href="#roles" class="nav-link">角色分工</a>
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main">
+
+  <!-- Section: Overview -->
+  <section class="section fade-up" id="overview">
+    <div class="section-header">
+      <div class="section-badge">System Overview</div>
+      <h2 class="section-title">三大阶段 · 八大模块闭环</h2>
+      <p class="section-desc">从「发现谁」到「怎么打」再到「如何赢」，形成完整的商业化运营闭环</p>
+    </div>
+    <div class="phases-grid">
+      <div class="phase-card">
+        <div class="phase-header">
+          <div class="phase-num">01</div>
+          <div class="phase-title">发现谁</div>
+        </div>
+        <div class="phase-subtitle">从行业情报中锁定高潜客户</div>
+        <div class="phase-modules">
+          <span class="phase-module-tag">M1 行业情报雷达</span>
+          <span class="phase-module-tag">M2 高潜客户清洗</span>
+        </div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-header">
+          <div class="phase-num">02</div>
+          <div class="phase-title">怎么打</div>
+        </div>
+        <div class="phase-subtitle">基于竞品洞察输出差异化方案</div>
+        <div class="phase-modules">
+          <span class="phase-module-tag">M3 竞媒策略拆解</span>
+          <span class="phase-module-tag">M4 定制化方案引擎</span>
+        </div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-header">
+          <div class="phase-num">03</div>
+          <div class="phase-title">如何赢</div>
+        </div>
+        <div class="phase-subtitle">从商机跟进到投后复盘的完整闭环</div>
+        <div class="phase-modules">
+          <span class="phase-module-tag">M5 商机管理</span>
+          <span class="phase-module-tag">M6 投后复盘</span>
+          <span class="phase-module-tag">M7 客户分层</span>
+          <span class="phase-module-tag">M8 案例沉淀</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Flow Chart -->
+  <section class="section fade-up" id="flowchart">
+    <div class="section-header">
+      <div class="section-badge">Workflow Pipeline</div>
+      <h2 class="section-title">八模块闭环流转图</h2>
+      <p class="section-desc">点击任意模块进入详情页面，了解执行步骤与在线功能</p>
+    </div>
+    <div class="flow-container">
+      <div class="flow-chart">
+        <!-- M1 -->
+        <a href="m1-intelligence.html" class="flow-node">
+          <div class="flow-icon m1"><svg class="fi" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/></svg></div>
+          <div class="flow-label">行业情报雷达</div>
+          <div class="flow-freq">周频</div>
+        </a>
+        <div class="flow-arrow"><svg viewBox="0 0 32 16"><path d="M0 8h28M22 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- M2 -->
+        <a href="m2-customer.html" class="flow-node">
+          <div class="flow-icon m2"><svg class="fi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#fff"/></svg></div>
+          <div class="flow-label">高潜客户清洗</div>
+          <div class="flow-freq">周频</div>
+        </a>
+        <div class="flow-arrow"><svg viewBox="0 0 32 16"><path d="M0 8h28M22 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- M3 -->
+        <a href="m3-competitor.html" class="flow-node">
+          <div class="flow-icon m3"><svg class="fi" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/><line x1="10" y1="7" x2="14" y2="7"/><line x1="7" y1="10" x2="7" y2="14"/></svg></div>
+          <div class="flow-label">竞媒策略拆解</div>
+          <div class="flow-freq">双周频</div>
+        </a>
+        <div class="flow-arrow"><svg viewBox="0 0 32 16"><path d="M0 8h28M22 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- M4 -->
+        <a href="m4-proposal.html" class="flow-node">
+          <div class="flow-icon m4"><svg class="fi" viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></div>
+          <div class="flow-label">定制化方案引擎</div>
+          <div class="flow-freq">按需</div>
+        </a>
+        <div class="flow-arrow"><svg viewBox="0 0 32 16"><path d="M0 8h28M22 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- M5 -->
+        <a href="m5-opportunity.html" class="flow-node">
+          <div class="flow-icon m5"><svg class="fi" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10z"/></svg></div>
+          <div class="flow-label">商机管理与跟进</div>
+          <div class="flow-freq">实时</div>
+        </a>
+        <div class="flow-arrow"><svg viewBox="0 0 32 16"><path d="M0 8h28M22 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- M6 -->
+        <a href="m6-review.html" class="flow-node">
+          <div class="flow-icon m6"><svg class="fi" viewBox="0 0 24 24"><polyline points="4 18 8 12 12 15 16 8 20 11"/><line x1="4" y1="4" x2="4" y2="20"/><line x1="4" y1="20" x2="20" y2="20"/></svg></div>
+          <div class="flow-label">投后效果复盘</div>
+          <div class="flow-freq">月频</div>
+        </a>
+        <div class="flow-arrow"><svg viewBox="0 0 32 16"><path d="M0 8h28M22 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- M7 -->
+        <a href="m7-stratification.html" class="flow-node">
+          <div class="flow-icon m7"><svg class="fi" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><circle cx="17" cy="10" r="3"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><path d="M16 20c0-3 1.5-4 3.5-4S23 17 23 20"/></svg></div>
+          <div class="flow-label">客户分层运营</div>
+          <div class="flow-freq">月频</div>
+        </a>
+        <div class="flow-arrow"><svg viewBox="0 0 32 16"><path d="M0 8h28M22 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- M8 -->
+        <a href="m8-cases.html" class="flow-node">
+          <div class="flow-icon m8"><svg class="fi" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9"/></svg></div>
+          <div class="flow-label">标杆案例沉淀</div>
+          <div class="flow-freq">季频</div>
+        </a>
+      </div>
+      <div class="flow-feedback">
+        <div class="feedback-line">
+          <span class="feedback-arrow">←</span>
+          <span>M8 标杆案例 → 反哺 M1 情报库 & M4 方案引擎</span>
+          <span class="feedback-arrow">·</span>
+          <span>M6 效果数据 → 反馈优化 M4 方案引擎</span>
+          <span class="feedback-arrow">→</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Modules -->
+  <section class="section fade-up" id="modules">
+    <div class="section-header">
+      <div class="section-badge">Module Details</div>
+      <h2 class="section-title">八大核心模块</h2>
+      <p class="section-desc">每个模块均支持在线查看执行步骤、模板数据和关键产出物</p>
+    </div>
+    <div class="modules-grid">
+      <!-- M1 -->
+      <a href="m1-intelligence.html" class="module-card" data-module="m1">
+        <div class="module-card-header">
+          <div class="module-card-icon">🔍</div>
+          <div>
+            <div class="module-card-title">M1 行业情报雷达</div>
+            <div class="module-card-freq">周频 · 每周一/二</div>
+          </div>
+        </div>
+        <div class="module-card-desc">持续追踪微信小游戏行业动态，第一时间捕捉营销创新玩法和高潜客户信号</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">情报周报</span>
+          <span class="module-kpi-tag">企微快报</span>
+          <span class="module-kpi-tag">情报命中率≥15%</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：运营</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- M2 -->
+      <a href="m2-customer.html" class="module-card" data-module="m2">
+        <div class="module-card-header">
+          <div class="module-card-icon">🎯</div>
+          <div>
+            <div class="module-card-title">M2 高潜客户清洗</div>
+            <div class="module-card-freq">周频 · 每周二</div>
+          </div>
+        </div>
+        <div class="module-card-desc">四层筛选漏斗模型，从微信小游戏生态中系统性筛选出高商业化潜力的目标客户</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">四层漏斗筛选</span>
+          <span class="module-kpi-tag">S/A/B/C分档</span>
+          <span class="module-kpi-tag">有效对话率≥40%</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：运营 → 销售确认</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- M3 -->
+      <a href="m3-competitor.html" class="module-card" data-module="m3">
+        <div class="module-card-header">
+          <div class="module-card-icon">⚔️</div>
+          <div>
+            <div class="module-card-title">M3 竞媒策略拆解</div>
+            <div class="module-card-freq">双周频 + 季度深度</div>
+          </div>
+        </div>
+        <div class="module-card-desc">系统性分析抖音/小红书/快手/支付宝的小游戏营销生态，提炼QQ差异化卖点</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">4份竞媒报告</span>
+          <span class="module-kpi-tag">差异化卖点≥5</span>
+          <span class="module-kpi-tag">横向对比</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：运营</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- M4 -->
+      <a href="m4-proposal.html" class="module-card" data-module="m4">
+        <div class="module-card-header">
+          <div class="module-card-icon">📋</div>
+          <div>
+            <div class="module-card-title">M4 定制化方案引擎</div>
+            <div class="module-card-freq">按需 · S级≤1周</div>
+          </div>
+        </div>
+        <div class="module-card-desc">快速产出高质量营销方案，支持通用版+休闲/SLG/模拟经营3个品类定制版</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">通用+3品类方案</span>
+          <span class="module-kpi-tag">销售话术库</span>
+          <span class="module-kpi-tag">签约转化≥20%</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：运营 + 销售需求输入</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- M5 -->
+      <a href="m5-opportunity.html" class="module-card" data-module="m5">
+        <div class="module-card-header">
+          <div class="module-card-icon">💼</div>
+          <div>
+            <div class="module-card-title">M5 商机管理与跟进</div>
+            <div class="module-card-freq">实时 + 每周四同步</div>
+          </div>
+        </div>
+        <div class="module-card-desc">全生命周期管理每一条商机，从初步接触到签约结项，确保无遗漏、可追溯</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">7阶段管道</span>
+          <span class="module-kpi-tag">AI纪要提取</span>
+          <span class="module-kpi-tag">S级响应≤48h</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：销售</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- M6 -->
+      <a href="m6-review.html" class="module-card" data-module="m6">
+        <div class="module-card-header">
+          <div class="module-card-icon">📊</div>
+          <div>
+            <div class="module-card-title">M6 投后效果复盘</div>
+            <div class="module-card-freq">月频 · 结项后2周内</div>
+          </div>
+        </div>
+        <div class="module-card-desc">曝光→互动→转化→ROI全链路数据回收与分析，系统性评估投放效果</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">全链路指标</span>
+          <span class="module-kpi-tag">复盘覆盖率100%</span>
+          <span class="module-kpi-tag">ROI达标≥70%</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：运营</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- M7 -->
+      <a href="m7-stratification.html" class="module-card" data-module="m7">
+        <div class="module-card-header">
+          <div class="module-card-icon">👥</div>
+          <div>
+            <div class="module-card-title">M7 客户分层运营</div>
+            <div class="module-card-freq">月频</div>
+          </div>
+        </div>
+        <div class="module-card-desc">基于投放效果和客户价值进行S/A/B/C分层管理，制定差异化续投策略</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">四层价值分层</span>
+          <span class="module-kpi-tag">S级续投率≥60%</span>
+          <span class="module-kpi-tag">LTV逐季提升</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：销售 + 运营数据支持</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- M8 -->
+      <a href="m8-cases.html" class="module-card" data-module="m8">
+        <div class="module-card-header">
+          <div class="module-card-icon">🏆</div>
+          <div>
+            <div class="module-card-title">M8 标杆案例沉淀</div>
+            <div class="module-card-freq">季频 + 即时录入</div>
+          </div>
+        </div>
+        <div class="module-card-desc">将成功合作案例结构化归档，形成可复用的案例库，反哺方案输出和情报分析</div>
+        <div class="module-card-kpis">
+          <span class="module-kpi-tag">100%入库</span>
+          <span class="module-kpi-tag">季度净增≥3</span>
+          <span class="module-kpi-tag">引用率≥50%</span>
+        </div>
+        <div class="module-card-footer">
+          <span class="module-card-owner">主责：运营</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Section: Data Flow -->
+  <section class="section fade-up" id="dataflow">
+    <div class="section-header">
+      <div class="section-badge">Data Pipeline</div>
+      <h2 class="section-title">数据流转关系</h2>
+      <p class="section-desc">每个模块的输出如何驱动下游模块的输入</p>
+    </div>
+    <div class="dataflow-grid">
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#12B7F5,#3DC2F7)">M1</div>
+          <div class="dataflow-label">情报雷达</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">行业趋势周报、新锐游戏清单</div>
+          <div class="dataflow-usage">→ M2 补充潜在客户池</div>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#5B6FFF,#7B8FFF)">M2</div>
+          <div class="dataflow-label">客户清洗</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">S/A级高潜客户名单</div>
+          <div class="dataflow-usage">→ M4 定向出方案 · M5 建立商机</div>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#8B5CF6,#A07DFF)">M3</div>
+          <div class="dataflow-label">竞媒分析</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">差异化优势点、可借鉴打法</div>
+          <div class="dataflow-usage">→ M4 方案中融入差异化卖点</div>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#FF6B9D,#FF8FB8)">M4</div>
+          <div class="dataflow-label">方案引擎</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">定制化营销方案PPT</div>
+          <div class="dataflow-usage">→ M5 销售提案使用</div>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#FFB800,#FFCC40)">M5</div>
+          <div class="dataflow-label">商机管理</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">签约客户信息、投放Brief</div>
+          <div class="dataflow-usage">→ M6 建立效果追踪基线</div>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#00D4AA,#2DDDBA)">M6</div>
+          <div class="dataflow-label">投后复盘</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">ROI报告、优化建议</div>
+          <div class="dataflow-usage">→ M4 方案迭代 · M7 客户分层依据</div>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#F97316,#FB923C)">M7</div>
+          <div class="dataflow-label">客户分层</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">客户价值评估、续投计划</div>
+          <div class="dataflow-usage">→ M5 续投商机推进</div>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="dataflow-from">
+          <div class="dataflow-tag" style="background:linear-gradient(135deg,#EC4899,#F472B6)">M8</div>
+          <div class="dataflow-label">案例沉淀</div>
+        </div>
+        <div class="dataflow-arrow-mid">→</div>
+        <div class="dataflow-content">
+          <div class="dataflow-output">标杆案例库</div>
+          <div class="dataflow-usage">→ M1 情报补充 · M4 方案案例引用</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Rhythm -->
+  <section class="section fade-up" id="rhythm">
+    <div class="section-header">
+      <div class="section-badge">Execution Rhythm</div>
+      <h2 class="section-title">执行节奏总览</h2>
+      <p class="section-desc">周→双周→月→季度，分频次有节奏地推进每个模块</p>
+    </div>
+    <div class="rhythm-table-wrap">
+      <table class="rhythm-table">
+        <thead>
+          <tr>
+            <th>频率</th>
+            <th>模块</th>
+            <th>核心动作</th>
+            <th>产出物</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="freq-badge weekly">每周</span></td>
+            <td><strong>M1</strong> 行业情报雷达</td>
+            <td>采集 → 快报 → 周报</td>
+            <td>企微快报 + 情报周报</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge weekly">每周</span></td>
+            <td><strong>M2</strong> 高潜客户清洗</td>
+            <td>更新池 → 筛选 → 分档</td>
+            <td>高潜客户名单</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge realtime">实时</span></td>
+            <td><strong>M5</strong> 商机管理与跟进</td>
+            <td>录入 → 跟进 → AI纪要提取</td>
+            <td>商机追踪表</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge biweekly">双周</span></td>
+            <td><strong>M3</strong> 竞媒策略拆解</td>
+            <td>竞品动态更新</td>
+            <td>竞媒对比表更新</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge ondemand">按需</span></td>
+            <td><strong>M4</strong> 定制化方案引擎</td>
+            <td>需求 → 定制 → 交付</td>
+            <td>营销方案PPT</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge monthly">月度</span></td>
+            <td><strong>M6</strong> 投后效果复盘</td>
+            <td>数据回收 → 复盘分析</td>
+            <td>复盘报告</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge monthly">月度</span></td>
+            <td><strong>M7</strong> 客户分层运营</td>
+            <td>价值评估 → 策略更新</td>
+            <td>分层运营表</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge quarterly">季度</span></td>
+            <td><strong>M8</strong> 标杆案例沉淀</td>
+            <td>案例归档 → 知识库更新</td>
+            <td>案例库</td>
+          </tr>
+          <tr>
+            <td><span class="freq-badge quarterly">季度</span></td>
+            <td><strong>M3</strong> 竞媒深度报告</td>
+            <td>深度调研报告更新</td>
+            <td>竞媒调研报告</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section: Roles -->
+  <section class="section fade-up" id="roles">
+    <div class="section-header">
+      <div class="section-badge">Team Roles</div>
+      <h2 class="section-title">团队角色分工</h2>
+      <p class="section-desc">2-3人精干团队，运营+销售协同作战</p>
+    </div>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-avatar ops">🎯</div>
+          <div class="role-name">运营（主力）</div>
+        </div>
+        <div class="role-desc">情报采集、客户筛选、竞品分析、方案制作、效果复盘、案例沉淀<br>核心产出：周报、客户清单、方案PPT、复盘报告</div>
+        <div class="role-modules">
+          <span class="role-module-tag lead">M1 主导</span>
+          <span class="role-module-tag lead">M2 主导</span>
+          <span class="role-module-tag lead">M3 主导</span>
+          <span class="role-module-tag lead">M4 主导</span>
+          <span class="role-module-tag support">M5 协助</span>
+          <span class="role-module-tag lead">M6 主导</span>
+          <span class="role-module-tag support">M7 支持</span>
+          <span class="role-module-tag lead">M8 主导</span>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-avatar sales">💼</div>
+          <div class="role-name">销售</div>
+        </div>
+        <div class="role-desc">商机跟进、客户关系维护、需求收集、客户分层运营<br>核心产出：会议纪要、商机记录、签约推进</div>
+        <div class="role-modules">
+          <span class="role-module-tag support">M1 知晓</span>
+          <span class="role-module-tag support">M2 确认</span>
+          <span class="role-module-tag support">M3 知晓</span>
+          <span class="role-module-tag support">M4 需求输入</span>
+          <span class="role-module-tag lead">M5 主导</span>
+          <span class="role-module-tag support">M6 反馈</span>
+          <span class="role-module-tag lead">M7 主导</span>
+          <span class="role-module-tag support">M8 素材</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">QQ媒体 × 微信小游戏 · 品牌效果售卖工作流</div>
+    <div class="footer-meta">版本 v1.0 · 更新日期 2026-03-28 · 适用团队：非微信流量游戏行业运营组</div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 100);
+});
+
+// Active nav link on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Fade-up animation on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

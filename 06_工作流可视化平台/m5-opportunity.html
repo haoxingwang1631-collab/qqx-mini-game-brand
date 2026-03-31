@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M5 商机管理与跟进 — QQ×小游戏工作流</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; background: #F8FBFF; color: #1a1a2e; line-height: 1.7; font-size: 15px; }
+:root {
+  --brand-primary: #12B7F5; --module-color: #FFB800; --module-gradient: linear-gradient(135deg, #FFB800, #FFCC40); --module-light: #FFF8E1;
+  --text-primary: #1a1a2e; --text-secondary: #555770; --text-tertiary: #8889a0;
+  --bg-white: #ffffff; --bg-dark: #0E1A2B;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --radius: 20px; --radius-sm: 12px;
+}
+.module-hero { background: var(--bg-dark); padding: 80px 24px 60px; position: relative; overflow: hidden; }
+.module-hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 30% 50%, rgba(255,184,0,0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(249,115,22,0.08) 0%, transparent 50%); animation: heroGlow 10s ease-in-out infinite alternate; }
+@keyframes heroGlow { 0% { transform: scale(1); } 100% { transform: scale(1.05) translate(-1%, 1%); } }
+.hero-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+.hero-breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; }
+.hero-breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; } .hero-breadcrumb a:hover { color: rgba(255,255,255,0.7); }
+.hero-breadcrumb .sep { color: rgba(255,255,255,0.2); } .hero-breadcrumb .current { color: var(--module-color); font-weight: 600; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,184,0,0.15); color: var(--module-color); padding: 8px 20px; border-radius: 100px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,184,0,0.25); margin-bottom: 20px; }
+.hero-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; margin-bottom: 12px; }
+.hero-title .highlight { background: var(--module-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-desc { font-size: 16px; color: rgba(255,255,255,0.5); max-width: 600px; margin-bottom: 32px; }
+.hero-kpis { display: flex; gap: 32px; flex-wrap: wrap; }
+.hero-kpi .value { font-size: 28px; font-weight: 800; color: #fff; line-height: 1.1; }
+.hero-kpi .value span { font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5); }
+.hero-kpi .label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+.nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.88); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0 24px; }
+.nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 10px 0; }
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-logo { font-size: 14px; font-weight: 700; color: var(--module-color); white-space: nowrap; margin-right: 16px; flex-shrink: 0; text-decoration: none; }
+.nav-link { white-space: nowrap; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; flex-shrink: 0; }
+.nav-link:hover { background: var(--module-light); color: #B8860B; }
+.nav-link.active { background: var(--module-color); color: #1a1a2e; }
+.nav-divider { width: 1px; height: 20px; background: #e2e8f0; margin: 0 8px; flex-shrink: 0; }
+.main { max-width: 1200px; margin: 0 auto; padding: 48px 24px 80px; }
+.section { margin-bottom: 64px; }
+.section-header { margin-bottom: 32px; }
+.section-badge { display: inline-block; font-size: 11px; font-weight: 700; color: #B8860B; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.section-title { font-size: 26px; font-weight: 800; color: var(--text-primary); }
+.content-card { background: var(--bg-white); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); margin-bottom: 20px; }
+.content-card h3 { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.content-card h3 .icon { width: 32px; height: 32px; border-radius: 8px; background: var(--module-light); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+
+/* Pipeline */
+.pipeline { display: flex; gap: 0; overflow-x: auto; padding: 20px 0; margin-bottom: 32px; }
+.pipeline-stage { flex: 1; min-width: 120px; text-align: center; padding: 20px 12px; position: relative; background: var(--bg-white); border: 1px solid rgba(0,0,0,0.06); margin-right: -1px; transition: all 0.2s; }
+.pipeline-stage:first-child { border-radius: 12px 0 0 12px; }
+.pipeline-stage:last-child { border-radius: 0 12px 12px 0; }
+.pipeline-stage:hover { background: var(--module-light); z-index: 1; }
+.pipeline-stage.won { background: linear-gradient(135deg, rgba(5,150,105,0.1), rgba(5,150,105,0.05)); border-color: rgba(5,150,105,0.2); }
+.pipeline-stage.lost { background: linear-gradient(135deg, rgba(239,68,68,0.05), rgba(239,68,68,0.02)); border-color: rgba(239,68,68,0.15); }
+.pipeline-num { font-size: 11px; font-weight: 600; color: var(--text-tertiary); margin-bottom: 4px; }
+.pipeline-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.pipeline-arrow { color: var(--module-color); font-size: 16px; display: flex; align-items: center; padding: 0 4px; }
+
+/* Field groups */
+.field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.field-card { background: var(--bg-white); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); }
+.field-card-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.field-list { list-style: none; padding: 0; }
+.field-list li { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+.field-list li:last-child { border-bottom: none; }
+.field-name { color: var(--text-primary); font-weight: 500; }
+.field-type { font-size: 11px; padding: 2px 8px; border-radius: 100px; background: #f0f4f8; color: var(--text-tertiary); }
+
+/* AI Flow */
+.ai-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 20px; background: #f8f9fa; border-radius: var(--radius-sm); border: 1px dashed #dee2e6; }
+.ai-step { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--bg-white); border-radius: 10px; box-shadow: var(--shadow-sm); font-size: 13px; color: var(--text-primary); font-weight: 500; }
+.ai-step .step-icon { font-size: 18px; }
+.ai-arrow { color: var(--module-color); font-size: 16px; }
+
+.insight-box { background: var(--module-light); border-radius: var(--radius-sm); padding: 20px 24px; margin: 20px 0; border: 1px solid rgba(255,184,0,0.2); }
+.insight-box .insight-label { font-size: 11px; font-weight: 700; color: #B8860B; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.insight-box p { font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+
+.module-nav-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 48px; padding-top: 32px; border-top: 1px solid #E2E8F0; }
+.module-nav-btn { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--bg-white); border-radius: var(--radius-sm); text-decoration: none; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); transition: all 0.2s; }
+.module-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.module-nav-btn .direction { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; }
+.module-nav-btn .name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.module-nav-btn .arrow { font-size: 20px; color: var(--module-color); }
+.footer { background: var(--bg-dark); padding: 40px 24px; text-align: center; }
+.footer-text { font-size: 13px; color: rgba(255,255,255,0.35); } .footer-text a { color: var(--brand-primary); text-decoration: none; }
+.fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) { .pipeline { flex-direction: column; } .field-group { grid-template-columns: 1fr; } .ai-flow { flex-direction: column; } .module-nav-footer { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<section class="module-hero">
+  <div class="hero-content">
+    <div class="hero-breadcrumb">
+      <a href="index.html">工作流总览</a><span class="sep">/</span><span class="current">M5 商机管理与跟进</span>
+    </div>
+    <div class="hero-badge"><span>💼</span><span>Module 05 · 实时更新</span></div>
+    <h1 class="hero-title">商机管理<span class="highlight">与跟进</span></h1>
+    <p class="hero-desc">全生命周期管理每一条商机，从初步接触到签约结项，确保无遗漏、可追溯、有节奏。</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi"><div class="value">100<span>%</span></div><div class="label">录入及时率</div></div>
+      <div class="hero-kpi"><div class="value">≤48<span>h</span></div><div class="label">S级响应时间</div></div>
+      <div class="hero-kpi"><div class="value">7<span>阶段</span></div><div class="label">商机管道</div></div>
+      <div class="hero-kpi"><div class="value">AI<span>辅助</span></div><div class="label">纪要提取</div></div>
+    </div>
+  </div>
+</section>
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">← 返回总览</a>
+    <div class="nav-divider"></div>
+    <a href="#pipeline" class="nav-link active">商机管道</a>
+    <a href="#fields" class="nav-link">字段体系</a>
+    <a href="#ai-minutes" class="nav-link">AI纪要提取</a>
+    <div class="nav-divider"></div>
+    <a href="m4-proposal.html" class="nav-link">← M4</a>
+    <a href="m6-review.html" class="nav-link">M6 →</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- Pipeline -->
+  <section class="section fade-up" id="pipeline">
+    <div class="section-header">
+      <div class="section-badge">Opportunity Pipeline</div>
+      <h2 class="section-title">七阶段商机管道</h2>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-stage"><div class="pipeline-num">阶段1</div><div class="pipeline-name">初步接触</div></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage"><div class="pipeline-num">阶段2</div><div class="pipeline-name">需求确认</div></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage"><div class="pipeline-num">阶段3</div><div class="pipeline-name">方案提报</div></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage"><div class="pipeline-num">阶段4</div><div class="pipeline-name">商务谈判</div></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage"><div class="pipeline-num">阶段5</div><div class="pipeline-name">签约</div></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage won"><div class="pipeline-num">阶段6</div><div class="pipeline-name">执行中</div></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage won"><div class="pipeline-num">阶段7</div><div class="pipeline-name">已结项</div></div>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <div class="pipeline-stage lost" style="display:inline-block;border-radius:10px;padding:10px 24px;margin:0;">
+        <div class="pipeline-name" style="color:#EF4444;">⚠️ 流失</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fields -->
+  <section class="section fade-up" id="fields">
+    <div class="section-header">
+      <div class="section-badge">Field System</div>
+      <h2 class="section-title">商机追踪表字段体系</h2>
+    </div>
+    <div class="field-group">
+      <div class="field-card">
+        <div class="field-card-title">📋 基础信息区</div>
+        <ul class="field-list">
+          <li><span class="field-name">商机ID</span><span class="field-type">自动编号</span></li>
+          <li><span class="field-name">客户名称</span><span class="field-type">文本</span></li>
+          <li><span class="field-name">游戏名称</span><span class="field-type">文本</span></li>
+          <li><span class="field-name">游戏品类</span><span class="field-type">下拉选择</span></li>
+          <li><span class="field-name">客户联系人</span><span class="field-type">文本</span></li>
+          <li><span class="field-name">所属销售</span><span class="field-type">下拉选择</span></li>
+          <li><span class="field-name">商机来源</span><span class="field-type">下拉选择</span></li>
+        </ul>
+      </div>
+      <div class="field-card">
+        <div class="field-card-title">📊 商机状态区</div>
+        <ul class="field-list">
+          <li><span class="field-name">商机阶段</span><span class="field-type">7阶段管道</span></li>
+          <li><span class="field-name">意向评级</span><span class="field-type">S/A/B/C</span></li>
+          <li><span class="field-name">预估预算</span><span class="field-type">数值(万)</span></li>
+          <li><span class="field-name">目标档期</span><span class="field-type">日期范围</span></li>
+          <li><span class="field-name">签约概率</span><span class="field-type">百分比</span></li>
+          <li><span class="field-name">预估签约金额</span><span class="field-type">数值(万)</span></li>
+        </ul>
+      </div>
+      <div class="field-card">
+        <div class="field-card-title">🤖 会议纪要提取区</div>
+        <ul class="field-list">
+          <li><span class="field-name">最近会议日期</span><span class="field-type">日期</span></li>
+          <li><span class="field-name">参会人员</span><span class="field-type">文本</span></li>
+          <li><span class="field-name">客户核心关注点</span><span class="field-type">AI提取</span></li>
+          <li><span class="field-name">明确需求清单</span><span class="field-type">AI提取</span></li>
+          <li><span class="field-name">客户顾虑/异议</span><span class="field-type">AI提取</span></li>
+          <li><span class="field-name">竞品对比提及</span><span class="field-type">AI提取</span></li>
+          <li><span class="field-name">下一步To-Do</span><span class="field-type">AI提取</span></li>
+        </ul>
+      </div>
+      <div class="field-card">
+        <div class="field-card-title">📝 跟进 & 结果区</div>
+        <ul class="field-list">
+          <li><span class="field-name">跟进日期</span><span class="field-type">日期</span></li>
+          <li><span class="field-name">跟进方式</span><span class="field-type">下拉选择</span></li>
+          <li><span class="field-name">跟进内容摘要</span><span class="field-type">文本</span></li>
+          <li><span class="field-name">最终签约金额</span><span class="field-type">数值(万)</span></li>
+          <li><span class="field-name">合作档期</span><span class="field-type">日期范围</span></li>
+          <li><span class="field-name">流失原因</span><span class="field-type">下拉选择</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Minutes -->
+  <section class="section fade-up" id="ai-minutes">
+    <div class="section-header">
+      <div class="section-badge">AI Meeting Minutes</div>
+      <h2 class="section-title">腾讯会议AI纪要提取流程</h2>
+    </div>
+    <div class="content-card">
+      <h3><span class="icon">🤖</span> 6步自动化流程</h3>
+      <div class="ai-flow">
+        <div class="ai-step"><span class="step-icon">📹</span>腾讯会议结束</div>
+        <span class="ai-arrow">→</span>
+        <div class="ai-step"><span class="step-icon">📋</span>打开AI纪要</div>
+        <span class="ai-arrow">→</span>
+        <div class="ai-step"><span class="step-icon">📄</span>复制纪要全文</div>
+        <span class="ai-arrow">→</span>
+        <div class="ai-step"><span class="step-icon">🤖</span>Prompt结构化提取</div>
+        <span class="ai-arrow">→</span>
+        <div class="ai-step"><span class="step-icon">✅</span>人工5min复核</div>
+        <span class="ai-arrow">→</span>
+        <div class="ai-step"><span class="step-icon">📊</span>填入商机追踪表</div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">✅</span> 人工复核检查清单</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;">
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>1. 客户名称准确性</strong><br><span style="color:var(--text-tertiary);">AI是否正确识别了客户公司和游戏名称？</span></div>
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>2. 意向评级合理性</strong><br><span style="color:var(--text-tertiary);">S/A/B/C是否符合实际感受？</span></div>
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>3. 需求完整性</strong><br><span style="color:var(--text-tertiary);">是否遗漏口头承诺？</span></div>
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>4. 顾虑准确性</strong><br><span style="color:var(--text-tertiary);">语气和严重程度是否正确？</span></div>
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>5. 竞品信息</strong><br><span style="color:var(--text-tertiary);">客户是否提到其他平台合作？</span></div>
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>6. To-Do明确性</strong><br><span style="color:var(--text-tertiary);">每个待办有责任人和截止日？</span></div>
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>7. 预算信息</strong><br><span style="color:var(--text-tertiary);">区分期望预算和实际预算</span></div>
+        <div style="padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;"><strong>8. 敏感信息</strong><br><span style="color:var(--text-tertiary);">脱敏处理不宜记录内容</span></div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-label">📄 配套文件</div>
+      <p><strong>商机管理追踪表</strong>：02_配套Excel模板/商机管理追踪表.xlsx<br>
+      <strong>AI纪要提取模板</strong>：04_辅助工具/腾讯会议AI纪要提取模板.md</p>
+    </div>
+  </section>
+
+  <div class="module-nav-footer">
+    <a href="m4-proposal.html" class="module-nav-btn"><span class="arrow">←</span><div><div class="direction">上一模块</div><div class="name">M4 定制化方案引擎</div></div></a>
+    <a href="m6-review.html" class="module-nav-btn"><div style="text-align:right;"><div class="direction">下一模块</div><div class="name">M6 投后效果复盘</div></div><span class="arrow">→</span></a>
+  </div>
+</div>
+
+<footer class="footer"><div class="footer-text"><a href="index.html">QQ媒体 × 微信小游戏 · 工作流</a> · M5 商机管理与跟进</div></footer>
+
+<script>
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => { let c = ''; sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) c = s.id; }); navLinks.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + c) l.classList.add('active'); }); });
+const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

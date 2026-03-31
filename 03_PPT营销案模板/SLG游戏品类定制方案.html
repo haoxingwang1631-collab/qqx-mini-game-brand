@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QQ × SLG游戏 品类定制营销方案</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; background: #F5F3FF; color: #1a1a2e; line-height: 1.7; font-size: 15px; }
+  :root {
+    --qq-blue: #12B7F5; --qq-gradient: linear-gradient(135deg, #12B7F5, #5B6FFF, #8B5CF6);
+    --slg-purple: #7C3AED; --slg-indigo: #4F46E5; --slg-cyan: #06B6D4;
+    --slg-gradient: linear-gradient(135deg, #4F46E5, #7C3AED);
+    --bg-soft-purple: #F0EBFF; --bg-soft-indigo: #EEF2FF; --bg-soft-cyan: #ECFEFF; --bg-soft-red: #FEF2F2;
+    --text-primary: #1a1a2e; --text-secondary: #555770; --text-tertiary: #8889a0;
+    --bg-white: #fff; --bg-page: #F5F3FF; --bg-dark: #0F0A2A;
+    --border-light: rgba(0,0,0,0.06);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04); --shadow-md: 0 4px 20px rgba(0,0,0,0.06); --shadow-lg: 0 8px 40px rgba(0,0,0,0.08);
+    --shadow-color: 0 4px 20px rgba(124,58,237,0.12);
+    --radius: 20px; --radius-sm: 12px;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--slg-purple); border-radius: 3px; }
+
+    .nav-bar {
+    position: sticky; top: 0; z-index: 1000;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-light); padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; gap: 8px;
+    overflow-x: auto; scrollbar-width: none; padding: 12px 0;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-link {
+    white-space: nowrap; padding: 6px 16px; border-radius: 100px;
+    font-size: 13px; font-weight: 500; color: var(--text-secondary);
+    text-decoration: none; transition: all 0.2s; flex-shrink: 0;
+  }
+  .nav-link:hover { background: var(--bg-soft-purple); color: var(--slg-purple); }
+  .nav-link.active { background: var(--slg-purple); color: #fff; }
+
+  .cover { min-height: 100vh; background: linear-gradient(160deg, #0F0A2A, #1E1548); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 24px; position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 40%, rgba(124,58,237,0.18) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(79,70,229,0.12) 0%, transparent 50%); animation: glow 10s ease-in-out infinite alternate; }
+  @keyframes glow { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+  .cover-content { position: relative; z-index: 1; max-width: 900px; }
+  .cover-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(124,58,237,0.15); color: #A78BFA; padding: 10px 24px; border-radius: 100px; font-size: 13px; font-weight: 600; letter-spacing: 3px; margin-bottom: 36px; border: 1px solid rgba(124,58,237,0.3); }
+  .cover h1 { font-size: clamp(40px, 7vw, 72px); font-weight: 800; color: #fff; line-height: 1.12; margin-bottom: 20px; letter-spacing: -2px; }
+  .cover h1 .hl { background: var(--slg-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .cover-subtitle { font-size: 20px; color: rgba(255,255,255,0.5); line-height: 1.6; max-width: 600px; margin: 0 auto 16px; }
+  .cover-tagline { display: inline-block; margin-top: 32px; padding: 14px 36px; background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25); border-radius: 100px; color: #C4B5FD; font-size: 16px; font-weight: 500; }
+  .cover-meta { margin-top: 48px; display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+  .cover-meta span { color: rgba(255,255,255,0.3); font-size: 13px; letter-spacing: 1px; }
+
+  .section { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
+  .chapter-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--slg-purple); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+  .chapter-label::before { content: ''; width: 24px; height: 3px; background: var(--slg-gradient); border-radius: 2px; }
+  .section-title { font-size: clamp(32px, 4vw, 48px); font-weight: 800; line-height: 1.2; margin-bottom: 16px; letter-spacing: -1px; }
+  .section-title .hl { background: var(--slg-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .section-desc { font-size: 17px; color: var(--text-secondary); max-width: 700px; line-height: 1.8; margin-bottom: 48px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 48px; }
+  .kpi-card { background: var(--bg-white); border-radius: var(--radius); padding: 32px 24px; text-align: center; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); transition: all 0.3s; position: relative; overflow: hidden; }
+  .kpi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-color); }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--slg-gradient); }
+  .kpi-number { font-size: 42px; font-weight: 800; background: var(--slg-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; margin-bottom: 8px; }
+  .kpi-unit { font-size: 16px; font-weight: 700; -webkit-text-fill-color: var(--slg-purple); }
+  .kpi-label { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+  .kpi-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-bottom: 48px; }
+  .feature-card { background: var(--bg-white); border-radius: var(--radius); padding: 36px 28px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); transition: all 0.3s; }
+  .feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .feature-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
+  .feature-card h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+  .feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+  .feature-tag { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+
+  .creative-section { background: linear-gradient(180deg, var(--bg-page), #fff); padding: 100px 24px; }
+  .creative-inner { max-width: 1200px; margin: 0 auto; }
+  .creative-list { display: flex; flex-direction: column; gap: 32px; }
+  .creative-item { display: grid; grid-template-columns: 1fr 1.4fr; gap: 0; border-radius: var(--radius); overflow: hidden; background: var(--bg-white); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); transition: all 0.3s; min-height: 240px; }
+  .creative-item:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+  .creative-item:nth-child(even) { grid-template-columns: 1.4fr 1fr; }
+  .creative-item:nth-child(even) .creative-visual { order: 2; }
+  .creative-item:nth-child(even) .creative-info { order: 1; }
+  .creative-visual { padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  .creative-visual .big-emoji { font-size: 64px; margin-bottom: 16px; animation: bounce 3s ease-in-out infinite; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .creative-visual .visual-label { font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; }
+  .creative-visual .visual-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+  .creative-visual .visual-tags span { padding: 4px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.3); }
+  .creative-info { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+  .creative-info .step-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; font-size: 14px; font-weight: 800; margin-bottom: 12px; }
+  .creative-info h3 { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; }
+  .creative-info .subtitle { font-size: 14px; color: var(--text-tertiary); margin-bottom: 16px; }
+  .creative-info ul { list-style: none; }
+  .creative-info li { font-size: 14px; color: var(--text-secondary); padding: 5px 0 5px 20px; position: relative; line-height: 1.6; }
+  .creative-info li::before { content: ''; position: absolute; left: 2px; top: 12px; width: 8px; height: 8px; border-radius: 50%; }
+
+  .creative-item.c1 .creative-visual { background: linear-gradient(135deg, #EEF2FF, #E0E7FF); color: #3730A3; }
+  .creative-item.c1 .step-num { background: var(--bg-soft-indigo); color: var(--slg-indigo); }
+  .creative-item.c1 li::before { background: var(--slg-indigo); }
+  .creative-item.c2 .creative-visual { background: linear-gradient(135deg, #F0EBFF, #E4D8FF); color: #5B21B6; }
+  .creative-item.c2 .step-num { background: var(--bg-soft-purple); color: var(--slg-purple); }
+  .creative-item.c2 li::before { background: var(--slg-purple); }
+  .creative-item.c3 .creative-visual { background: linear-gradient(135deg, #ECFEFF, #CFFAFE); color: #0E7490; }
+  .creative-item.c3 .step-num { background: var(--bg-soft-cyan); color: var(--slg-cyan); }
+  .creative-item.c3 li::before { background: var(--slg-cyan); }
+  .creative-item.c4 .creative-visual { background: linear-gradient(135deg, #FEF3C7, #FDE68A); color: #92400E; }
+  .creative-item.c4 .step-num { background: #FFFBEB; color: #F59E0B; }
+  .creative-item.c4 li::before { background: #F59E0B; }
+
+  .effect-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 48px; }
+  .effect-table thead th { background: var(--slg-gradient); color: #fff; padding: 16px 20px; font-size: 14px; font-weight: 700; text-align: left; }
+  .effect-table tbody td { background: var(--bg-white); padding: 16px 20px; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--border-light); }
+  .effect-table tbody tr:last-child td { border-bottom: none; }
+  .effect-table tbody tr:hover td { background: var(--bg-soft-purple); }
+  .effect-table .metric { font-weight: 700; color: #5B21B6; }
+
+  .highlight-box { background: var(--bg-white); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 32px; box-shadow: var(--shadow-sm); }
+  .highlight-box h4 { font-size: 15px; font-weight: 700; color: #5B21B6; margin-bottom: 8px; }
+  .highlight-box p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+  .footer { background: var(--bg-dark); padding: 80px 24px; text-align: center; color: #fff; position: relative; }
+  .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--slg-gradient); }
+  .footer h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; margin-bottom: 16px; }
+  .footer h2 .hl { background: var(--slg-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .footer p { font-size: 16px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .footer-contacts { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 40px; }
+  .footer-contact-item { text-align: center; }
+  .footer-contact-item .label { font-size: 12px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .footer-contact-item .value { font-size: 16px; color: #C4B5FD; font-weight: 600; }
+  .footer-brand { margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 13px; color: rgba(255,255,255,0.25); }
+
+  .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16,1,0.3,1); }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .section, .creative-section { padding: 60px 16px; } .nav-bar .nav-inner { gap: 4px; } .nav-link { font-size: 12px; padding: 5px 10px; } .kpi-grid { grid-template-columns: repeat(2,1fr); gap: 12px; } .feature-grid { grid-template-columns: 1fr; } .creative-item, .creative-item:nth-child(even) { grid-template-columns: 1fr; } .creative-item:nth-child(even) .creative-visual { order: 0; } .creative-item:nth-child(even) .creative-info { order: 0; } }
+</style>
+</head>
+<body>
+<nav class="nav-bar" id="mainNav" style="display:none;">
+  <div class="nav-inner">
+    <a class="nav-link" href="#trend">行业趋势</a><a class="nav-link" href="#value">QQ价值</a><a class="nav-link" href="#strategy">推荐玩法</a><a class="nav-link" href="#effect">效果预估</a><a class="nav-link" href="#contact">联系我们</a>
+  </div>
+</nav>
+
+<section class="cover" id="cover">
+  <div class="cover-content">
+    <div class="cover-badge">⚔️ QQ × SLG STRATEGY</div>
+    <h1>策略对决<br><span class="hl">社交征服</span></h1>
+    <p class="cover-subtitle">QQ × SLG游戏品类定制营销方案<br>以社群之力，铸就王者联盟</p>
+    <div class="cover-tagline">⚡ 硬核社交 · 长线运营 · 策略增长</div>
+    <div class="cover-meta"><span>QQ商业化团队出品</span><span>|</span><span>SLG游戏专属</span><span>|</span><span>2025</span></div>
+  </div>
+</section>
+
+<section class="section" id="trend" style="background:#fff;">
+  <div class="fade-in">
+    <div class="chapter-label">CHAPTER 01</div>
+    <h2 class="section-title">SLG游戏<span class="hl">行业趋势</span></h2>
+    <p class="section-desc">SLG品类迎来"手转小"的新机遇，高LTV与强社交属性让其成为品牌营销的优质赛道。</p>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-number">180<span class="kpi-unit">亿</span></div><div class="kpi-label">2024年市场规模</div><div class="kpi-sub">手游+小游戏总计</div></div>
+      <div class="kpi-card"><div class="kpi-number">¥350<span class="kpi-unit">+</span></div><div class="kpi-label">人均LTV</div><div class="kpi-sub">全品类最高水平</div></div>
+      <div class="kpi-card"><div class="kpi-number">68<span class="kpi-unit">%</span></div><div class="kpi-label">社交依赖度</div><div class="kpi-sub">联盟/公会核心留存因子</div></div>
+      <div class="kpi-card"><div class="kpi-number">45<span class="kpi-unit">天</span></div><div class="kpi-label">平均生命周期</div><div class="kpi-sub">长线运营价值突出</div></div>
+    </div>
+    <div class="highlight-box"><h4>📊 三大趋势洞察</h4><p><strong>手转小趋势：</strong>SLG从重度手游向小游戏平台迁移，降低下载门槛。<strong>高LTV价值：</strong>SLG用户付费意愿强、付费周期长。<strong>社交为核心：</strong>联盟/公会体系是SLG的生命线，68%的用户因"社交纽带"而长期留存。</p></div>
+  </div>
+</section>
+
+<section class="section" id="value">
+  <div class="fade-in">
+    <div class="chapter-label">CHAPTER 02</div>
+    <h2 class="section-title">SLG × QQ<span class="hl"> 核心价值</span></h2>
+    <p class="section-desc">QQ群 = SLG联盟大本营，社交基因与策略游戏完美共振。</p>
+    <div class="feature-grid">
+      <div class="feature-card"><div class="feature-icon" style="background:var(--bg-soft-indigo);">🏰</div><h3>硬核社交匹配</h3><p>SLG玩家天然需要团队协作，QQ群提供最成熟的社群管理能力——群公告、群文件、群直播，满足联盟指挥与策略分享的全部需求。</p><div class="feature-tag" style="background:var(--bg-soft-indigo);color:#3730A3;">社群基建</div></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--bg-soft-purple);">👥</div><h3>QQ群=盟会体系</h3><p>每个SLG联盟自然对应一个QQ群。通过QQ群绑定游戏联盟，实现"群内动员→游戏内行动→群内庆功"的完整闭环。</p><div class="feature-tag" style="background:var(--bg-soft-purple);color:#5B21B6;">天然闭环</div></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--bg-soft-cyan);">📈</div><h3>长线用户培育</h3><p>SLG用户生命周期长达45天+，QQ群是最佳的长线运营阵地，持续激活用户，延长付费周期和品牌曝光时长。</p><div class="feature-tag" style="background:var(--bg-soft-cyan);color:#0E7490;">LTV最大化</div></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--bg-soft-red);">🎯</div><h3>年轻用户拓新</h3><p>SLG品类亟需年轻化突破，QQ的70%年轻用户群是SLG拓展下一代玩家的战略级渠道。</p><div class="feature-tag" style="background:var(--bg-soft-red);color:#DC2626;">破圈利器</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="creative-section" id="strategy">
+  <div class="creative-inner fade-in">
+    <div class="chapter-label">CHAPTER 03</div>
+    <h2 class="section-title">推荐<span class="hl">营销玩法</span></h2>
+    <p class="section-desc">专为SLG硬核社交属性设计的深度营销方案。</p>
+    <div class="creative-list">
+      <div class="creative-item c1">
+        <div class="creative-visual"><div class="big-emoji">⚔️</div><div class="visual-label">Alliance War</div><div class="visual-tags"><span>社群绑定</span><span>联盟对抗</span><span>全服征服</span></div></div>
+        <div class="creative-info"><div class="step-num">01</div><h3>QQ群服联盟战</h3><p class="subtitle">群即联盟，社交即战力</p><ul><li>QQ群绑定游戏内联盟/服务器</li><li>跨服联盟对抗赛事组织</li><li>群内实时战况播报Bot</li><li>联盟排名奖励+品牌赞助</li><li>赛事结果自动分享传播</li></ul></div>
+      </div>
+      <div class="creative-item c2">
+        <div class="creative-visual"><div class="big-emoji">🏆</div><div class="visual-label">Strategy League</div><div class="visual-tags"><span>策略对决</span><span>排位赛</span><span>硬核竞技</span></div></div>
+        <div class="creative-info"><div class="step-num">02</div><h3>策略挑战赛</h3><p class="subtitle">让策略成为社交货币</p><ul><li>品牌冠名策略对决锦标赛</li><li>实时排位赛+赛季制运营</li><li>策略回放分享到QQ动态</li><li>顶尖玩家KOL合作传播</li><li>赛事直播+品牌深度曝光</li></ul></div>
+      </div>
+      <div class="creative-item c3">
+        <div class="creative-visual"><div class="big-emoji">📺</div><div class="visual-label">Commander Live</div><div class="visual-tags"><span>群直播</span><span>KOL</span><span>策略教学</span></div></div>
+        <div class="creative-info"><div class="step-num">03</div><h3>指挥官直播</h3><p class="subtitle">大佬带队，新手秒懂</p><ul><li>QQ群内直播指挥官带队</li><li>策略教学+新手引导内容</li><li>直播间品牌道具/礼物植入</li><li>直播预约→群内通知闭环</li><li>精彩片段自动剪辑分发</li></ul></div>
+      </div>
+      <div class="creative-item c4">
+        <div class="creative-visual"><div class="big-emoji">🎮</div><div class="visual-label">Game Center</div><div class="visual-tags"><span>首页推荐</span><span>专题活动</span><span>集中爆发</span></div></div>
+        <div class="creative-info"><div class="step-num">04</div><h3>游戏中心专题</h3><p class="subtitle">亿级流量入口，精准触达策略玩家</p><ul><li>QQ游戏中心SLG品类专题页</li><li>首页推荐位+排行榜冠名</li><li>新服开服QQ推送通知</li><li>游戏中心→群组一键关联</li><li>品类交叉推荐精准触达</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="effect" style="background:#fff;">
+  <div class="fade-in">
+    <div class="chapter-label">CHAPTER 04</div>
+    <h2 class="section-title">长线效果<span class="hl">预估</span></h2>
+    <p class="section-desc">SLG品类注重长线运营价值，以下为基于历史合作的效果预估。</p>
+    <table class="effect-table">
+      <thead><tr><th>指标</th><th>基础版（50万）</th><th>进阶版（120万）</th><th>旗舰版（300万）</th></tr></thead>
+      <tbody>
+        <tr><td>总曝光量</td><td><span class="metric">2000万+</span></td><td><span class="metric">8000万+</span></td><td><span class="metric">3亿+</span></td></tr>
+        <tr><td>新增用户</td><td><span class="metric">8万+</span></td><td><span class="metric">35万+</span></td><td><span class="metric">120万+</span></td></tr>
+        <tr><td>30日留存率</td><td><span class="metric">18%+</span></td><td><span class="metric">25%+</span></td><td><span class="metric">30%+</span></td></tr>
+        <tr><td>付费率</td><td><span class="metric">5%+</span></td><td><span class="metric">8%+</span></td><td><span class="metric">12%+</span></td></tr>
+        <tr><td>联盟群绑定数</td><td><span class="metric">500+</span></td><td><span class="metric">3000+</span></td><td><span class="metric">12000+</span></td></tr>
+        <tr><td>人均LTV</td><td><span class="metric">¥200+</span></td><td><span class="metric">¥350+</span></td><td><span class="metric">¥500+</span></td></tr>
+      </tbody>
+    </table>
+    <div class="highlight-box"><h4>⚡ SLG长线运营优势</h4><p>通过QQ群的联盟绑定机制，可以将用户的社交关系转化为长期留存动力。旗舰版"群服联盟战"玩法历史数据显示可将30日留存率提升至30%以上，LTV提升40%。</p></div>
+  </div>
+</section>
+
+<footer class="footer" id="contact">
+  <h2>策略制胜<span class="hl">社交为王</span></h2>
+  <p>QQ × SLG，以社群之力铸就长线增长</p>
+  <div class="footer-contacts">
+    <div class="footer-contact-item"><div class="label">商务合作</div><div class="value">qq-ads@tencent.com</div></div>
+    <div class="footer-contact-item"><div class="label">咨询热线</div><div class="value">400-XXX-XXXX</div></div>
+    <div class="footer-contact-item"><div class="label">SLG行业经理</div><div class="value">[行业负责人]</div></div>
+  </div>
+  <div class="footer-brand">QQ商业化团队 · SLG游戏品类定制方案 · CONFIDENTIAL</div>
+</footer>
+
+<script>
+  const fadeObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.fade-in').forEach(el => fadeObs.observe(el));
+
+  // Show nav after scrolling past cover
+  const navBar = document.getElementById('mainNav');
+  const coverEl = document.getElementById('cover');
+  const coverObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { navBar.style.display = e.isIntersecting ? 'none' : 'block'; });
+  }, { threshold: 0.05 });
+  coverObs.observe(coverEl);
+
+  // Nav active state
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section[id], footer[id]');
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector('.nav-link[href="#' + e.target.id + '"]');
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => navObs.observe(s));
+</script>
+</body>
+</html>

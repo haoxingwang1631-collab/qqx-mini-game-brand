@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M6 投后效果复盘 — QQ×小游戏工作流</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; background: #F8FBFF; color: #1a1a2e; line-height: 1.7; font-size: 15px; }
+:root {
+  --brand-primary: #12B7F5; --module-color: #00D4AA; --module-gradient: linear-gradient(135deg, #00D4AA, #2DDDBA); --module-light: #ECFDF5;
+  --text-primary: #1a1a2e; --text-secondary: #555770; --text-tertiary: #8889a0;
+  --bg-white: #ffffff; --bg-dark: #0E1A2B;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --radius: 20px; --radius-sm: 12px;
+}
+.module-hero { background: var(--bg-dark); padding: 80px 24px 60px; position: relative; overflow: hidden; }
+.module-hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 30% 50%, rgba(0,212,170,0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(18,183,245,0.08) 0%, transparent 50%); animation: heroGlow 10s ease-in-out infinite alternate; }
+@keyframes heroGlow { 0% { transform: scale(1); } 100% { transform: scale(1.05) translate(-1%, 1%); } }
+.hero-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+.hero-breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; }
+.hero-breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; } .hero-breadcrumb a:hover { color: rgba(255,255,255,0.7); }
+.hero-breadcrumb .sep { color: rgba(255,255,255,0.2); } .hero-breadcrumb .current { color: var(--module-color); font-weight: 600; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,212,170,0.15); color: var(--module-color); padding: 8px 20px; border-radius: 100px; font-size: 13px; font-weight: 600; border: 1px solid rgba(0,212,170,0.25); margin-bottom: 20px; }
+.hero-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; margin-bottom: 12px; }
+.hero-title .highlight { background: var(--module-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-desc { font-size: 16px; color: rgba(255,255,255,0.5); max-width: 600px; margin-bottom: 32px; }
+.hero-kpis { display: flex; gap: 32px; flex-wrap: wrap; }
+.hero-kpi .value { font-size: 28px; font-weight: 800; color: #fff; line-height: 1.1; }
+.hero-kpi .value span { font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5); }
+.hero-kpi .label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+.nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.88); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0 24px; }
+.nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 10px 0; }
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-logo { font-size: 14px; font-weight: 700; color: var(--module-color); white-space: nowrap; margin-right: 16px; flex-shrink: 0; text-decoration: none; }
+.nav-link { white-space: nowrap; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; flex-shrink: 0; }
+.nav-link:hover { background: var(--module-light); color: #059669; }
+.nav-link.active { background: var(--module-color); color: #fff; }
+.nav-divider { width: 1px; height: 20px; background: #e2e8f0; margin: 0 8px; flex-shrink: 0; }
+.main { max-width: 1200px; margin: 0 auto; padding: 48px 24px 80px; }
+.section { margin-bottom: 64px; }
+.section-header { margin-bottom: 32px; }
+.section-badge { display: inline-block; font-size: 11px; font-weight: 700; color: #059669; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.section-title { font-size: 26px; font-weight: 800; color: var(--text-primary); }
+.content-card { background: var(--bg-white); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); margin-bottom: 20px; }
+.content-card h3 { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.content-card h3 .icon { width: 32px; height: 32px; border-radius: 8px; background: var(--module-light); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+
+/* Metrics Pyramid */
+.metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.metric-card { background: var(--bg-white); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); text-align: center; transition: transform 0.2s; }
+.metric-card:hover { transform: translateY(-3px); }
+.metric-icon { font-size: 32px; margin-bottom: 10px; }
+.metric-layer { font-size: 11px; font-weight: 700; color: var(--module-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.metric-items { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+
+/* Report Template */
+.report-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.report-step { background: var(--bg-white); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); }
+.report-step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: var(--module-gradient); color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.report-step-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.report-step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+
+.insight-box { background: var(--module-light); border-radius: var(--radius-sm); padding: 20px 24px; margin: 20px 0; border: 1px solid rgba(0,212,170,0.2); }
+.insight-box .insight-label { font-size: 11px; font-weight: 700; color: #059669; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.insight-box p { font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+
+.module-nav-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 48px; padding-top: 32px; border-top: 1px solid #E2E8F0; }
+.module-nav-btn { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--bg-white); border-radius: var(--radius-sm); text-decoration: none; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); transition: all 0.2s; }
+.module-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.module-nav-btn .direction { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; }
+.module-nav-btn .name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.module-nav-btn .arrow { font-size: 20px; color: var(--module-color); }
+.footer { background: var(--bg-dark); padding: 40px 24px; text-align: center; }
+.footer-text { font-size: 13px; color: rgba(255,255,255,0.35); } .footer-text a { color: var(--brand-primary); text-decoration: none; }
+.fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) { .metrics-grid, .report-steps { grid-template-columns: 1fr; } .module-nav-footer { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<section class="module-hero">
+  <div class="hero-content">
+    <div class="hero-breadcrumb"><a href="index.html">工作流总览</a><span class="sep">/</span><span class="current">M6 投后效果复盘</span></div>
+    <div class="hero-badge"><span>📊</span><span>Module 06 · 月频</span></div>
+    <h1 class="hero-title">投后效果<span class="highlight">复盘</span></h1>
+    <p class="hero-desc">系统性回收投放效果数据，曝光→互动→转化→ROI全链路评估，沉淀优化经验。</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi"><div class="value">≤2<span>周</span></div><div class="label">结项后完成复盘</div></div>
+      <div class="hero-kpi"><div class="value">100<span>%</span></div><div class="label">复盘覆盖率</div></div>
+      <div class="hero-kpi"><div class="value">≥70<span>%</span></div><div class="label">ROI达标率</div></div>
+      <div class="hero-kpi"><div class="value">5<span>层</span></div><div class="label">指标体系</div></div>
+    </div>
+  </div>
+</section>
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">← 返回总览</a>
+    <div class="nav-divider"></div>
+    <a href="#metrics" class="nav-link active">指标体系</a>
+    <a href="#report" class="nav-link">复盘报告</a>
+    <div class="nav-divider"></div>
+    <a href="m5-opportunity.html" class="nav-link">← M5</a>
+    <a href="m7-stratification.html" class="nav-link">M7 →</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <section class="section fade-up" id="metrics">
+    <div class="section-header">
+      <div class="section-badge">Metrics Framework</div>
+      <h2 class="section-title">五层复盘指标体系</h2>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">👁️</div>
+        <div class="metric-layer">曝光层</div>
+        <div class="metric-items">总曝光量<br>日均曝光<br>曝光CPM</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">👆</div>
+        <div class="metric-layer">互动层</div>
+        <div class="metric-items">点击量<br>点击率CTR<br>互动率</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">🎯</div>
+        <div class="metric-layer">转化层</div>
+        <div class="metric-items">转化量<br>转化率CVR<br>CPA</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">💰</div>
+        <div class="metric-layer">ROI层</div>
+        <div class="metric-items">总花费<br>单用户成本<br>ROI</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">📊</div>
+        <div class="metric-layer">对比层</div>
+        <div class="metric-items">vs 预估值差异<br>vs 行业基准<br>vs 竞品效果</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fade-up" id="report">
+    <div class="section-header">
+      <div class="section-badge">Report Structure</div>
+      <h2 class="section-title">复盘报告标准结构</h2>
+    </div>
+    <div class="report-steps">
+      <div class="report-step">
+        <div class="report-step-num">1</div>
+        <div class="report-step-title">投放概况</div>
+        <div class="report-step-desc">客户/品类/档期/预算/资源位，快速了解投放全貌</div>
+      </div>
+      <div class="report-step">
+        <div class="report-step-num">2</div>
+        <div class="report-step-title">核心数据呈现</div>
+        <div class="report-step-desc">曝光→互动→转化→ROI全链路数据可视化展示</div>
+      </div>
+      <div class="report-step">
+        <div class="report-step-num">3</div>
+        <div class="report-step-title">效果达成分析</div>
+        <div class="report-step-desc">vs预估偏差 & 原因归因，找到超预期和不达标的因素</div>
+      </div>
+      <div class="report-step">
+        <div class="report-step-num">4</div>
+        <div class="report-step-title">亮点与问题总结</div>
+        <div class="report-step-desc">结构化记录本次投放的亮点和需要改进的问题</div>
+      </div>
+      <div class="report-step">
+        <div class="report-step-num">5</div>
+        <div class="report-step-title">优化建议</div>
+        <div class="report-step-desc">下次投放的改进方向，反馈至M4方案引擎迭代</div>
+      </div>
+      <div class="report-step">
+        <div class="report-step-num">6</div>
+        <div class="report-step-title">客户反馈记录</div>
+        <div class="report-step-desc">客户对本次合作的满意度、后续意向、改进建议</div>
+      </div>
+    </div>
+    <div class="insight-box" style="margin-top:24px;">
+      <div class="insight-label">📄 配套文件 & 数据流向</div>
+      <p><strong>投后复盘与ROI追踪表</strong>：02_配套Excel模板/投后复盘与ROI追踪表.xlsx<br><br>
+      复盘产出 → <strong>M4方案引擎</strong>（优化方案迭代）+ <strong>M7客户分层</strong>（效果数据作为分层依据）</p>
+    </div>
+  </section>
+
+  <div class="module-nav-footer">
+    <a href="m5-opportunity.html" class="module-nav-btn"><span class="arrow">←</span><div><div class="direction">上一模块</div><div class="name">M5 商机管理与跟进</div></div></a>
+    <a href="m7-stratification.html" class="module-nav-btn"><div style="text-align:right;"><div class="direction">下一模块</div><div class="name">M7 客户分层运营</div></div><span class="arrow">→</span></a>
+  </div>
+</div>
+
+<footer class="footer"><div class="footer-text"><a href="index.html">QQ媒体 × 微信小游戏 · 工作流</a> · M6 投后效果复盘</div></footer>
+
+<script>
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => { let c = ''; sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) c = s.id; }); navLinks.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + c) l.classList.add('active'); }); });
+const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M4 定制化方案引擎 — QQ×小游戏工作流</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; background: #F8FBFF; color: #1a1a2e; line-height: 1.7; font-size: 15px; }
+:root {
+  --brand-primary: #12B7F5; --brand-gradient: linear-gradient(135deg, #12B7F5, #5B6FFF);
+  --module-color: #FF6B9D; --module-gradient: linear-gradient(135deg, #FF6B9D, #FF8FB8); --module-light: #FFE4EC;
+  --text-primary: #1a1a2e; --text-secondary: #555770; --text-tertiary: #8889a0;
+  --bg-white: #ffffff; --bg-dark: #0E1A2B;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --radius: 20px; --radius-sm: 12px;
+}
+.module-hero { background: var(--bg-dark); padding: 80px 24px 60px; position: relative; overflow: hidden; }
+.module-hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 30% 50%, rgba(255,107,157,0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(139,92,246,0.08) 0%, transparent 50%); animation: heroGlow 10s ease-in-out infinite alternate; }
+@keyframes heroGlow { 0% { transform: scale(1); } 100% { transform: scale(1.05) translate(-1%, 1%); } }
+.hero-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+.hero-breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; }
+.hero-breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; } .hero-breadcrumb a:hover { color: rgba(255,255,255,0.7); }
+.hero-breadcrumb .sep { color: rgba(255,255,255,0.2); } .hero-breadcrumb .current { color: var(--module-color); font-weight: 600; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,107,157,0.15); color: var(--module-color); padding: 8px 20px; border-radius: 100px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,107,157,0.25); margin-bottom: 20px; }
+.hero-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; margin-bottom: 12px; }
+.hero-title .highlight { background: var(--module-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-desc { font-size: 16px; color: rgba(255,255,255,0.5); max-width: 600px; margin-bottom: 32px; }
+.hero-kpis { display: flex; gap: 32px; flex-wrap: wrap; }
+.hero-kpi .value { font-size: 28px; font-weight: 800; color: #fff; line-height: 1.1; }
+.hero-kpi .value span { font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5); }
+.hero-kpi .label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+.nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.88); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0 24px; }
+.nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 10px 0; }
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-logo { font-size: 14px; font-weight: 700; color: var(--module-color); white-space: nowrap; margin-right: 16px; flex-shrink: 0; text-decoration: none; }
+.nav-link { white-space: nowrap; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; flex-shrink: 0; }
+.nav-link:hover { background: var(--module-light); color: var(--module-color); }
+.nav-link.active { background: var(--module-color); color: #fff; }
+.nav-divider { width: 1px; height: 20px; background: #e2e8f0; margin: 0 8px; flex-shrink: 0; }
+.main { max-width: 1200px; margin: 0 auto; padding: 48px 24px 80px; }
+.section { margin-bottom: 64px; }
+.section-header { margin-bottom: 32px; }
+.section-badge { display: inline-block; font-size: 11px; font-weight: 700; color: var(--module-color); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.section-title { font-size: 26px; font-weight: 800; color: var(--text-primary); }
+.content-card { background: var(--bg-white); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); margin-bottom: 20px; }
+.content-card h3 { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.content-card h3 .icon { width: 32px; height: 32px; border-radius: 8px; background: var(--module-light); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+
+/* Proposal Cards */
+.proposal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.proposal-card { background: var(--bg-white); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); transition: transform 0.3s, box-shadow 0.3s; text-decoration: none; color: inherit; display: block; overflow: hidden; position: relative; }
+.proposal-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.proposal-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+.proposal-card.universal::before { background: var(--brand-gradient); }
+.proposal-card.casual::before { background: linear-gradient(90deg, #FFB800, #FFCC40); }
+.proposal-card.slg::before { background: linear-gradient(90deg, #1E293B, #475569); }
+.proposal-card.simulation::before { background: linear-gradient(90deg, #059669, #34D399); }
+.proposal-icon { font-size: 36px; margin-bottom: 16px; }
+.proposal-name { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.proposal-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
+.proposal-style { font-size: 12px; color: var(--text-tertiary); font-style: italic; margin-bottom: 12px; }
+.view-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 100px; background: var(--module-light); color: var(--module-color); font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+.view-btn:hover { background: var(--module-color); color: #fff; }
+
+/* PPT Structure */
+.ppt-structure { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.ppt-page { background: #f8f9fa; border-radius: 12px; padding: 16px; border: 1px solid #e9ecef; text-align: center; transition: transform 0.2s; }
+.ppt-page:hover { transform: translateY(-2px); }
+.ppt-page-num { font-size: 20px; font-weight: 800; color: var(--module-color); margin-bottom: 4px; }
+.ppt-page-title { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.ppt-page-desc { font-size: 11px; color: var(--text-tertiary); }
+
+/* Process Flow */
+.process-flow { display: flex; flex-direction: column; gap: 0; }
+.process-step { display: flex; align-items: flex-start; gap: 16px; padding: 20px 0; }
+.process-dot-container { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.process-dot { width: 36px; height: 36px; border-radius: 10px; background: var(--module-gradient); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+.process-line { width: 2px; flex: 1; min-height: 20px; background: linear-gradient(to bottom, var(--module-color), transparent); margin-top: 4px; }
+.process-content { flex: 1; padding-top: 6px; }
+.process-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.process-desc { font-size: 13px; color: var(--text-secondary); }
+
+/* Talk Script */
+.talk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.talk-card { background: #f8f9fa; border-radius: 12px; padding: 20px; border: 1px solid #e9ecef; }
+.talk-scene { font-size: 13px; font-weight: 700; color: var(--module-color); margin-bottom: 6px; }
+.talk-point { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+
+.insight-box { background: var(--module-light); border-radius: var(--radius-sm); padding: 20px 24px; margin: 20px 0; border: 1px solid rgba(255,107,157,0.15); }
+.insight-box .insight-label { font-size: 11px; font-weight: 700; color: var(--module-color); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.insight-box p { font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+
+.module-nav-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 48px; padding-top: 32px; border-top: 1px solid #E2E8F0; }
+.module-nav-btn { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--bg-white); border-radius: var(--radius-sm); text-decoration: none; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04); transition: all 0.2s; }
+.module-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.module-nav-btn .direction { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; }
+.module-nav-btn .name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.module-nav-btn .arrow { font-size: 20px; color: var(--module-color); }
+.footer { background: var(--bg-dark); padding: 40px 24px; text-align: center; }
+.footer-text { font-size: 13px; color: rgba(255,255,255,0.35); } .footer-text a { color: var(--brand-primary); text-decoration: none; }
+.fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) { .proposal-grid, .ppt-structure, .talk-grid { grid-template-columns: 1fr; } .module-nav-footer { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<section class="module-hero">
+  <div class="hero-content">
+    <div class="hero-breadcrumb">
+      <a href="index.html">工作流总览</a><span class="sep">/</span><span class="current">M4 定制化方案引擎</span>
+    </div>
+    <div class="hero-badge"><span>📋</span><span>Module 04 · 按需执行</span></div>
+    <h1 class="hero-title">定制化<span class="highlight">方案引擎</span></h1>
+    <p class="hero-desc">快速产出高质量的"QQ × 微信小游戏"营销方案，支持通用版和品类定制版，配套销售话术库。</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi"><div class="value">≤3<span>天</span></div><div class="label">方案产出周期</div></div>
+      <div class="hero-kpi"><div class="value">≥70<span>%</span></div><div class="label">首轮满意度</div></div>
+      <div class="hero-kpi"><div class="value">≥20<span>%</span></div><div class="label">方案→签约转化</div></div>
+      <div class="hero-kpi"><div class="value">4<span>套</span></div><div class="label">方案模板</div></div>
+    </div>
+  </div>
+</section>
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">← 返回总览</a>
+    <div class="nav-divider"></div>
+    <a href="#templates" class="nav-link active">方案模板</a>
+    <a href="#structure" class="nav-link">PPT结构</a>
+    <a href="#process" class="nav-link">定制流程</a>
+    <a href="#talks" class="nav-link">话术库</a>
+    <div class="nav-divider"></div>
+    <a href="m3-competitor.html" class="nav-link">← M3</a>
+    <a href="m5-opportunity.html" class="nav-link">M5 →</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- Templates -->
+  <section class="section fade-up" id="templates">
+    <div class="section-header">
+      <div class="section-badge">Proposal Templates</div>
+      <h2 class="section-title">通用版 + 3品类定制版</h2>
+    </div>
+    <div class="proposal-grid">
+      <a href="../03_PPT营销案模板/QQx小游戏通用营销方案.html" class="proposal-card universal">
+        <div class="proposal-icon">📊</div>
+        <div class="proposal-name">通用营销方案</div>
+        <div class="proposal-desc">适用于所有品类的标准12-15页营销方案，包含QQ生态价值、资源位展示、创意玩法推荐等核心模块</div>
+        <div class="view-btn">📄 查看方案 →</div>
+      </a>
+      <a href="../03_PPT营销案模板/休闲游戏品类定制方案.html" class="proposal-card casual">
+        <div class="proposal-icon">🎮</div>
+        <div class="proposal-name">休闲游戏定制版</div>
+        <div class="proposal-desc">明亮活泼、糖果色系风格。轻度用户画像、轻互动创意（试玩广告、互动挑战赛）、短周期效果预估</div>
+        <div class="proposal-style">风格：明亮活泼 · 糖果色系 · 圆润图形</div>
+        <div class="view-btn">📄 查看方案 →</div>
+      </a>
+      <a href="../03_PPT营销案模板/SLG游戏品类定制方案.html" class="proposal-card slg">
+        <div class="proposal-icon">⚔️</div>
+        <div class="proposal-name">SLG游戏定制版</div>
+        <div class="proposal-desc">深色系科技感风格。核心硬核玩家画像、深度互动创意（策略挑战、阵营对抗）、长线投放效果预估</div>
+        <div class="proposal-style">风格：深色系 · 科技感 · 锐利线条</div>
+        <div class="view-btn">📄 查看方案 →</div>
+      </a>
+      <a href="../03_PPT营销案模板/模拟经营品类定制方案.html" class="proposal-card simulation">
+        <div class="proposal-icon">🏠</div>
+        <div class="proposal-name">模拟经营定制版</div>
+        <div class="proposal-desc">温暖自然绿色系风格。泛休闲用户画像、沉浸式创意（模拟体验、建造挑战）、中周期效果预估</div>
+        <div class="proposal-style">风格：温暖自然 · 绿色系 · 手绘质感</div>
+        <div class="view-btn">📄 查看方案 →</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- PPT Structure -->
+  <section class="section fade-up" id="structure">
+    <div class="section-header">
+      <div class="section-badge">PPT Structure</div>
+      <h2 class="section-title">通用版方案结构（12-15页）</h2>
+    </div>
+    <div class="ppt-structure">
+      <div class="ppt-page"><div class="ppt-page-num">P1</div><div class="ppt-page-title">封面</div><div class="ppt-page-desc">客户Logo + QQ Logo</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P2</div><div class="ppt-page-title">生态价值</div><div class="ppt-page-desc">QQ平台核心优势</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P3</div><div class="ppt-page-title">用户画像</div><div class="ppt-page-desc">数据洞察 & 重合度</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P4</div><div class="ppt-page-title">行业趋势</div><div class="ppt-page-desc">小游戏营销趋势</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P5-6</div><div class="ppt-page-title">合作模式</div><div class="ppt-page-desc">品牌/效果/定制</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P7-8</div><div class="ppt-page-title">资源位</div><div class="ppt-page-desc">样式 & 规格 & 报价</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P9-10</div><div class="ppt-page-title">创意玩法</div><div class="ppt-page-desc">2-3种推荐方案</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P11</div><div class="ppt-page-title">成功案例</div><div class="ppt-page-desc">来自M8案例库</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P12</div><div class="ppt-page-title">效果预估</div><div class="ppt-page-desc">曝光/转化/报价</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P13</div><div class="ppt-page-title">排期建议</div><div class="ppt-page-desc">投放档期 & 节奏</div></div>
+      <div class="ppt-page"><div class="ppt-page-num">P14</div><div class="ppt-page-title">团队 & 联系</div><div class="ppt-page-desc">服务团队介绍</div></div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section fade-up" id="process">
+    <div class="section-header">
+      <div class="section-badge">Customization Flow</div>
+      <h2 class="section-title">方案定制流程</h2>
+    </div>
+    <div class="content-card">
+      <div class="process-flow">
+        <div class="process-step">
+          <div class="process-dot-container"><div class="process-dot">1</div><div class="process-line"></div></div>
+          <div class="process-content"><div class="process-title">销售提供客户需求Brief</div><div class="process-desc">明确客户背景、游戏品类、预算区间、合作诉求</div></div>
+        </div>
+        <div class="process-step">
+          <div class="process-dot-container"><div class="process-dot">2</div><div class="process-line"></div></div>
+          <div class="process-content"><div class="process-title">确认品类 & 选择模板</div><div class="process-desc">根据游戏品类选择通用模板或品类定制模板</div></div>
+        </div>
+        <div class="process-step">
+          <div class="process-dot-container"><div class="process-dot">3</div><div class="process-line"></div></div>
+          <div class="process-content"><div class="process-title">填充客户专属数据</div><div class="process-desc">画像重合分析、行业洞察定制、关联案例匹配</div></div>
+        </div>
+        <div class="process-step">
+          <div class="process-dot-container"><div class="process-dot">4</div><div class="process-line"></div></div>
+          <div class="process-content"><div class="process-title">融入竞品差异化卖点</div><div class="process-desc">引用M3竞媒分析产出的差异化优势话术</div></div>
+        </div>
+        <div class="process-step">
+          <div class="process-dot-container"><div class="process-dot">5</div><div class="process-line"></div></div>
+          <div class="process-content"><div class="process-title">运营内审（30min）</div><div class="process-desc">质量检查、数据校验、逻辑自洽性审核</div></div>
+        </div>
+        <div class="process-step">
+          <div class="process-dot-container"><div class="process-dot">6</div><div class="process-line"></div></div>
+          <div class="process-content"><div class="process-title">销售反馈 & 微调</div><div class="process-desc">基于销售侧反馈进行最终调整优化</div></div>
+        </div>
+        <div class="process-step">
+          <div class="process-dot-container"><div class="process-dot">✓</div></div>
+          <div class="process-content"><div class="process-title">终版交付</div><div class="process-desc">S级客户1周内 · A级客户2周内</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Talks -->
+  <section class="section fade-up" id="talks">
+    <div class="section-header">
+      <div class="section-badge">Sales Playbook</div>
+      <h2 class="section-title">销售话术库</h2>
+    </div>
+    <div class="talk-grid">
+      <div class="talk-card">
+        <div class="talk-scene">🤝 开场破冰</div>
+        <div class="talk-point">QQ年轻用户价值、平台社交属性优势，快速建立专业信任</div>
+      </div>
+      <div class="talk-card">
+        <div class="talk-scene">🎯 差异化卖点</div>
+        <div class="talk-point">vs 抖音（社交场景深度）、vs 小红书（规模化触达）、vs 快手（用户调性）</div>
+      </div>
+      <div class="talk-card">
+        <div class="talk-scene">🛡️ 异议处理</div>
+        <div class="talk-point">"QQ用户还活跃吗？"→ 数据反驳（DAU/MAU、年轻用户占比、社交活跃度）</div>
+      </div>
+      <div class="talk-card">
+        <div class="talk-scene">🔥 促成合作</div>
+        <div class="talk-point">档期稀缺性、首投优惠政策、成功案例佐证、限时资源锁定</div>
+      </div>
+      <div class="talk-card">
+        <div class="talk-scene">🔄 续投引导</div>
+        <div class="talk-point">效果数据回顾、优化空间、长线价值、阶梯优惠政策</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="module-nav-footer">
+    <a href="m3-competitor.html" class="module-nav-btn"><span class="arrow">←</span><div><div class="direction">上一模块</div><div class="name">M3 竞媒策略拆解</div></div></a>
+    <a href="m5-opportunity.html" class="module-nav-btn"><div style="text-align:right;"><div class="direction">下一模块</div><div class="name">M5 商机管理与跟进</div></div><span class="arrow">→</span></a>
+  </div>
+</div>
+
+<footer class="footer"><div class="footer-text"><a href="index.html">QQ媒体 × 微信小游戏 · 工作流</a> · M4 定制化方案引擎</div></footer>
+
+<script>
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => { let c = ''; sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) c = s.id; }); navLinks.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + c) l.classList.add('active'); }); });
+const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

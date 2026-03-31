@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M1 行业情报雷达 — QQ×小游戏工作流</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: #F8FBFF;
+  color: #1a1a2e;
+  line-height: 1.7;
+  font-size: 15px;
+}
+:root {
+  --brand-primary: #12B7F5;
+  --brand-secondary: #5B6FFF;
+  --brand-purple: #8B5CF6;
+  --brand-gradient: linear-gradient(135deg, #12B7F5, #5B6FFF);
+  --brand-light: #EBF8FF;
+  --module-color: #12B7F5;
+  --module-gradient: linear-gradient(135deg, #12B7F5, #3DC2F7);
+  --module-light: #EBF8FF;
+  --text-primary: #1a1a2e;
+  --text-secondary: #555770;
+  --text-tertiary: #8889a0;
+  --bg-white: #ffffff;
+  --bg-page: #F8FBFF;
+  --bg-dark: #0E1A2B;
+  --border: #E2E8F0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --radius: 20px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+}
+
+/* ===== Module Hero ===== */
+.module-hero {
+  background: var(--bg-dark);
+  padding: 80px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.module-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(18,183,245,0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 50%, rgba(91,111,255,0.08) 0%, transparent 50%);
+  animation: heroGlow 10s ease-in-out infinite alternate;
+}
+@keyframes heroGlow {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05) translate(-1%, 1%); }
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.hero-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+.hero-breadcrumb a {
+  color: rgba(255,255,255,0.4);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.hero-breadcrumb a:hover { color: rgba(255,255,255,0.7); }
+.hero-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+.hero-breadcrumb .current { color: var(--brand-primary); font-weight: 600; }
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(18,183,245,0.15);
+  color: var(--brand-primary);
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(18,183,245,0.25);
+  margin-bottom: 20px;
+}
+.hero-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+.hero-title .highlight {
+  background: var(--module-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-desc {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  max-width: 600px;
+  margin-bottom: 32px;
+}
+.hero-kpis {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.hero-kpi {
+  text-align: center;
+}
+.hero-kpi .value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+}
+.hero-kpi .value span {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+}
+.hero-kpi .label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ===== Nav Bar ===== */
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 10px 0;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-logo {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--module-color);
+  white-space: nowrap;
+  margin-right: 16px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.nav-link {
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.nav-link:hover { background: var(--module-light); color: var(--module-color); }
+.nav-link.active { background: var(--module-color); color: #fff; }
+.nav-divider { width: 1px; height: 20px; background: #e2e8f0; margin: 0 8px; flex-shrink: 0; }
+
+/* ===== Main ===== */
+.main { max-width: 1200px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* ===== Section ===== */
+.section { margin-bottom: 64px; }
+.section-header {
+  margin-bottom: 32px;
+}
+.section-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--module-color);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.section-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+/* ===== Content Card ===== */
+.content-card {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  margin-bottom: 20px;
+}
+.content-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.content-card h3 .icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--module-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.content-card p, .content-card li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+.content-card ul { padding-left: 20px; }
+.content-card li { margin-bottom: 6px; }
+
+/* ===== Step Flow ===== */
+.step-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.step-card {
+  background: var(--bg-white);
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.step-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--module-gradient);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.step-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.step-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.step-timing {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  background: var(--module-light);
+  color: var(--module-color);
+  font-weight: 500;
+}
+
+/* ===== Table ===== */
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.data-table thead th {
+  background: var(--module-gradient);
+  color: #fff;
+  padding: 14px 16px;
+  font-weight: 600;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.data-table tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f2f5;
+  color: var(--text-secondary);
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover { background: #f8fafc; }
+
+/* ===== Insight Box ===== */
+.insight-box {
+  background: var(--module-light);
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  margin: 20px 0;
+  border: 1px solid rgba(18,183,245,0.15);
+}
+.insight-box .insight-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--module-color);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+.insight-box p {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+/* ===== Template Preview ===== */
+.template-preview {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.template-header {
+  background: var(--module-gradient);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  gap: 12px;
+}
+.template-header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  flex: 1;
+}
+.template-header-badge {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-weight: 500;
+}
+.template-body {
+  padding: 24px;
+}
+
+/* ===== Briefing Preview ===== */
+.briefing-preview {
+  background: #f8f9fa;
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  font-size: 14px;
+  line-height: 1.8;
+  border: 1px solid #e9ecef;
+}
+.briefing-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--module-color);
+}
+.briefing-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed #dee2e6;
+}
+.briefing-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.briefing-item-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--module-gradient);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 8px;
+}
+.briefing-item-title {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.briefing-insight {
+  margin-top: 6px;
+  padding-left: 30px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.briefing-link {
+  color: var(--module-color);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ===== Quality Checklist ===== */
+.checklist {
+  list-style: none;
+  padding: 0;
+}
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f2f5;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.checklist li:last-child { border-bottom: none; }
+.check-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: #ECFDF5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ===== Module Nav Footer ===== */
+.module-nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.module-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--bg-white);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: all 0.2s;
+  max-width: 300px;
+}
+.module-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.module-nav-btn .direction {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.module-nav-btn .name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.module-nav-btn .arrow {
+  font-size: 20px;
+  color: var(--module-color);
+}
+
+/* ===== Footer ===== */
+.footer {
+  background: var(--bg-dark);
+  padding: 40px 24px;
+  text-align: center;
+}
+.footer-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+}
+.footer-text a {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .step-flow { grid-template-columns: 1fr; }
+  .hero-kpis { gap: 20px; }
+  .module-nav-footer { flex-direction: column; }
+}
+
+/* ===== Animations ===== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="module-hero">
+  <div class="hero-content">
+    <div class="hero-breadcrumb">
+      <a href="index.html">工作流总览</a>
+      <span class="sep">/</span>
+      <span class="current">M1 行业情报雷达</span>
+    </div>
+    <div class="hero-badge">
+      <span>🔍</span>
+      <span>Module 01 · 周频执行</span>
+    </div>
+    <h1 class="hero-title">行业<span class="highlight">情报雷达</span></h1>
+    <p class="hero-desc">持续追踪微信小游戏行业动态，第一时间捕捉营销创新玩法和高潜客户信号，为整个工作流提供源头活水。</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi">
+        <div class="value">1<span>份/周</span></div>
+        <div class="label">情报周报</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="value">1<span>份/周</span></div>
+        <div class="label">企微快报</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="value">≥15<span>%</span></div>
+        <div class="label">情报命中率</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="value">≥8<span>条/周</span></div>
+        <div class="label">情报录入量</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NAV ===== -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">← 返回总览</a>
+    <div class="nav-divider"></div>
+    <a href="#steps" class="nav-link active">执行步骤</a>
+    <a href="#sources" class="nav-link">信息源</a>
+    <a href="#briefing" class="nav-link">企微快报</a>
+    <a href="#weekly" class="nav-link">情报周报</a>
+    <a href="#quality" class="nav-link">质量标准</a>
+    <div class="nav-divider"></div>
+    <a href="m2-customer.html" class="nav-link">下一模块: M2 →</a>
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- 执行步骤 -->
+  <section class="section fade-up" id="steps">
+    <div class="section-header">
+      <div class="section-badge">Execution Steps</div>
+      <h2 class="section-title">四步执行流程</h2>
+    </div>
+    <div class="step-flow">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title">信息采集</div>
+        <div class="step-desc">从6大信息源持续采集行业动态、榜单变化、竞品合作案例等原始情报素材</div>
+        <div class="step-timing">每日碎片化 + 周末集中</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title">企微群快报推送</div>
+        <div class="step-desc">筛选3-5条最具价值资讯，按模板格式化为一句话简报+深度解读，推送至企微群</div>
+        <div class="step-timing">每周一上午 11:00前</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title">情报结构化录入</div>
+        <div class="step-desc">将所有情报按10个标准字段录入周报模板：日期、来源、品类、玩法类型、关键洞察等</div>
+        <div class="step-timing">每周二上午</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-title">趋势分析与周报</div>
+        <div class="step-desc">从品类/媒体/玩法三维度分析趋势，选取1-2个最具参考价值的案例撰写深度分析</div>
+        <div class="step-timing">每周二下午 17:00前</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 信息源 -->
+  <section class="section fade-up" id="sources">
+    <div class="section-header">
+      <div class="section-badge">Intelligence Sources</div>
+      <h2 class="section-title">六大信息源清单</h2>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>信息源类型</th>
+            <th>具体渠道</th>
+            <th>采集频率</th>
+            <th>采集方式</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>内部数据</strong></td>
+            <td>DataTalk BI看板 — 小游戏品类趋势、投放数据</td>
+            <td>每周一次</td>
+            <td>登录查看，截图关键数据</td>
+          </tr>
+          <tr>
+            <td><strong>行业榜单</strong></td>
+            <td>微信小游戏畅销榜/飙升榜、阿拉丁指数</td>
+            <td>每周一次</td>
+            <td>手动检索，记录TOP变化</td>
+          </tr>
+          <tr>
+            <td><strong>媒体资讯</strong></td>
+            <td>游戏葡萄、GameLook、白鲸出海、36氪游戏版块</td>
+            <td>每日浏览</td>
+            <td>RSS/微信公众号推送，标记相关文章</td>
+          </tr>
+          <tr>
+            <td><strong>社交媒体</strong></td>
+            <td>微博/即刻/知乎相关话题</td>
+            <td>每日碎片化</td>
+            <td>关键词搜索，捕捉热点</td>
+          </tr>
+          <tr>
+            <td><strong>竞品动态</strong></td>
+            <td>抖音小游戏中心、快手小游戏、支付宝小游戏</td>
+            <td>每周一次</td>
+            <td>直接浏览各平台，记录新增合作案例</td>
+          </tr>
+          <tr>
+            <td><strong>行业报告</strong></td>
+            <td>Quest Mobile、易观、伽马数据</td>
+            <td>月度</td>
+            <td>下载最新报告，提取关键洞察</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight-box">
+      <div class="insight-label">💡 采集技巧</div>
+      <p>优先关注<strong>直接相关</strong>（小游戏客户在QQ或竞品平台的品牌合作动态）和<strong>高度关联</strong>（微信小游戏行业重大变化）的信息。每条情报都需要回答一个核心问题：<strong>"这对我们的QQ×小游戏业务意味着什么？"</strong></p>
+    </div>
+  </section>
+
+  <!-- 企微快报预览 -->
+  <section class="section fade-up" id="briefing">
+    <div class="section-header">
+      <div class="section-badge">WeChat Work Briefing</div>
+      <h2 class="section-title">企微群资讯快报</h2>
+    </div>
+    <div class="template-preview">
+      <div class="template-header">
+        <div class="template-header-title">📰 企微群资讯快报模板 — 在线预览</div>
+        <div class="template-header-badge">每周一推送</div>
+      </div>
+      <div class="template-body">
+        <div class="briefing-preview">
+          <div class="briefing-title">📰 QQ×小游戏 行业资讯快报｜第 12 期｜2026.03.24</div>
+          
+          <div style="font-weight:700;color:#1a1a2e;margin-bottom:12px;">🔥 本周核心资讯</div>
+          
+          <div class="briefing-item">
+            <span class="briefing-item-num">1</span>
+            <span class="briefing-item-title">《羊了个羊2》联动某奶茶品牌，单日曝光破3亿</span>
+            <div class="briefing-insight">
+              📌 <strong>一句话简报</strong>：头部休闲小游戏品牌联动模式跑通，验证了小游戏×快消的合作价值<br>
+              💡 <strong>深度解读</strong>：该案例证明小游戏的品牌联动不止于游戏内广告，更可以通过定制关卡+线下联动实现O2O闭环。QQ侧可借鉴其"定制挑战赛"机制，结合QQ的社交裂变优势做差异化。<br>
+              <a href="#" class="briefing-link">🔗 原文链接</a>
+            </div>
+          </div>
+
+          <div class="briefing-item">
+            <span class="briefing-item-num">2</span>
+            <span class="briefing-item-title">抖音小游戏推出"品牌小游戏定制平台"公测</span>
+            <div class="briefing-insight">
+              📌 <strong>一句话简报</strong>：抖音正式入局品牌定制小游戏赛道，降低品牌方合作门槛<br>
+              💡 <strong>深度解读</strong>：这是抖音在小游戏品牌合作上的重要信号，意味着竞品在工具化层面发力。QQ需要在定制灵活度和社交传播效率上保持差异化优势。<br>
+              <a href="#" class="briefing-link">🔗 原文链接</a>
+            </div>
+          </div>
+
+          <div class="briefing-item">
+            <span class="briefing-item-num">3</span>
+            <span class="briefing-item-title">模拟经营类小游戏DAU同比增长47%，成Q1增速最快品类</span>
+            <div class="briefing-insight">
+              📌 <strong>一句话简报</strong>：模拟经营品类爆发，多款新游跑出日活百万级成绩<br>
+              💡 <strong>深度解读</strong>：模拟经营品类的用户画像与QQ年轻用户高度重合，建议本周重点关注该品类头部游戏的品牌合作需求，主动触达。<br>
+              <a href="#" class="briefing-link">🔗 原文链接</a>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;padding-top:16px;border-top:2px solid #12B7F5;">
+            <div style="font-weight:700;color:#1a1a2e;margin-bottom:8px;">📊 本周趋势总结</div>
+            <ul style="padding-left:20px;color:#555770;font-size:13px;">
+              <li><strong>品类动态</strong>：模拟经营品类持续升温，休闲品类保持稳定，SLG出海回流</li>
+              <li><strong>媒体动态</strong>：抖音加速品牌小游戏工具化，快手推出小游戏创作者激励计划</li>
+              <li><strong>值得关注</strong>：下周微信小游戏平台将发布Q1开发者扶持政策，关注品牌合作相关条款</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📋</span> 资讯筛选优先级</h3>
+      <ol style="padding-left:20px;">
+        <li style="margin-bottom:8px;font-size:14px;color:var(--text-secondary)"><strong>直接相关</strong>：小游戏客户在QQ或竞品平台上的品牌合作动态</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--text-secondary)"><strong>高度关联</strong>：微信小游戏行业重大变化（政策、产品更新、流量变化）</li>
+        <li style="margin-bottom:8px;font-size:14px;color:var(--text-secondary)"><strong>可借鉴</strong>：其他媒体/行业的创新营销玩法，可迁移至QQ场景</li>
+        <li style="font-size:14px;color:var(--text-secondary)"><strong>趋势预判</strong>：可能影响未来1-3个月行业走向的信号</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 情报周报 -->
+  <section class="section fade-up" id="weekly">
+    <div class="section-header">
+      <div class="section-badge">Weekly Report</div>
+      <h2 class="section-title">情报周报模板</h2>
+    </div>
+    <div class="content-card">
+      <h3><span class="icon">📊</span> 周报标准字段</h3>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>字段</th>
+              <th>说明</th>
+              <th>示例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>日期</strong></td><td>资讯发布/发现日期</td><td>2026-03-24</td></tr>
+            <tr><td><strong>来源</strong></td><td>信息渠道</td><td>游戏葡萄</td></tr>
+            <tr><td><strong>案例/资讯名称</strong></td><td>标题</td><td>羊了个羊2 × 某奶茶联名</td></tr>
+            <tr><td><strong>涉及游戏</strong></td><td>相关小游戏名称</td><td>羊了个羊2</td></tr>
+            <tr><td><strong>涉及媒体</strong></td><td>合作媒体平台</td><td>微信小游戏</td></tr>
+            <tr><td><strong>游戏品类</strong></td><td>品类分类</td><td>休闲益智</td></tr>
+            <tr><td><strong>营销玩法类型</strong></td><td>合作形式</td><td>品牌联动</td></tr>
+            <tr><td><strong>关键洞察</strong></td><td>1-2句话核心看点</td><td>品牌联动O2O闭环模式验证</td></tr>
+            <tr><td><strong>与QQ关联度</strong></td><td>高/中/低</td><td>高</td></tr>
+            <tr><td><strong>备注</strong></td><td>补充信息</td><td>附截图、原文链接</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📈</span> 趋势分析维度</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+        <div style="background:var(--module-light);border-radius:12px;padding:20px;">
+          <div style="font-size:20px;margin-bottom:8px;">🎮</div>
+          <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;font-size:14px;">按品类维度</div>
+          <div style="font-size:13px;color:var(--text-secondary);">哪些品类本周动作频繁？</div>
+        </div>
+        <div style="background:#EDE9FE;border-radius:12px;padding:20px;">
+          <div style="font-size:20px;margin-bottom:8px;">📱</div>
+          <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;font-size:14px;">按媒体维度</div>
+          <div style="font-size:13px;color:var(--text-secondary);">哪些平台在发力小游戏营销？</div>
+        </div>
+        <div style="background:#ECFDF5;border-radius:12px;padding:20px;">
+          <div style="font-size:20px;margin-bottom:8px;">🎨</div>
+          <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;font-size:14px;">按玩法维度</div>
+          <div style="font-size:13px;color:var(--text-secondary);">有哪些新的营销玩法值得关注？</div>
+        </div>
+        <div style="background:#FFF7ED;border-radius:12px;padding:20px;">
+          <div style="font-size:20px;margin-bottom:8px;">🔬</div>
+          <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;font-size:14px;">重点案例</div>
+          <div style="font-size:13px;color:var(--text-secondary);">选取1-2个最具参考价值案例深度分析（300字）</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-label">📄 配套文件</div>
+      <p><strong>情报周报模板</strong>：02_配套Excel模板/行业情报周报模板.xlsx<br>
+      <strong>企微快报模板</strong>：04_辅助工具/企微群资讯快报模板.md</p>
+    </div>
+  </section>
+
+  <!-- 质量标准 -->
+  <section class="section fade-up" id="quality">
+    <div class="section-header">
+      <div class="section-badge">Quality Standards</div>
+      <h2 class="section-title">质量标准与检查清单</h2>
+    </div>
+    <div class="content-card">
+      <ul class="checklist">
+        <li>
+          <span class="check-icon">✓</span>
+          <span>每周情报录入数量 <strong>≥ 8条</strong></span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>重点案例深度分析 <strong>≥ 1个/周</strong>（300字以上）</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>企微快报在每周一 <strong>11:00前</strong> 完成推送</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>周报在每周二 <strong>17:00前</strong> 完成</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>月度情报命中率（情报→实际商机转化）<strong>≥15%</strong></span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Module Navigation -->
+  <div class="module-nav-footer">
+    <a href="index.html" class="module-nav-btn">
+      <span class="arrow">←</span>
+      <div>
+        <div class="direction">返回</div>
+        <div class="name">工作流总览</div>
+      </div>
+    </a>
+    <a href="m2-customer.html" class="module-nav-btn">
+      <div style="text-align:right;">
+        <div class="direction">下一模块</div>
+        <div class="name">M2 高潜客户清洗</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-text">
+    <a href="index.html">QQ媒体 × 微信小游戏 · 品牌效果售卖工作流</a> · M1 行业情报雷达
+  </div>
+</footer>
+
+<script>
+// Active nav link on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+// Fade-up
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

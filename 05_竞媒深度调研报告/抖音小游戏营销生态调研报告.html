@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抖音小游戏营销生态深度调研报告</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ===== Color System — 抖音 (Black + Magenta/Cyan) ===== */
+  :root {
+    --brand-primary: #fe2c55;
+    --brand-secondary: #25f4ee;
+    --brand-dark: #161823;
+    --brand-gradient: linear-gradient(135deg, #fe2c55, #ff6a88);
+    --brand-light: #fff0f3;
+    --brand-accent: #ff6a88;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-tertiary: #86868b;
+    --bg-white: #ffffff;
+    --bg-grey: #f5f5f7;
+    --bg-dark: #161823;
+    --border: #d2d2d7;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  /* ===== Cover Page ===== */
+  .cover {
+    min-height: 100vh;
+    background: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(254,44,85,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, rgba(37,244,238,0.1) 0%, transparent 50%);
+    animation: coverGlow 8s ease-in-out infinite alternate;
+  }
+  @keyframes coverGlow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-2%, 2%) scale(1.05); }
+  }
+  .cover-content { position: relative; z-index: 1; max-width: 800px; }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(254,44,85,0.2);
+    color: var(--brand-primary);
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    border: 1px solid rgba(254,44,85,0.3);
+  }
+  .cover h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+  }
+  .cover h1 span {
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .cover-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 48px;
+    line-height: 1.6;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .cover-meta-item {
+    text-align: center;
+  }
+  .cover-meta-item .label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+  .cover-meta-item .value {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+  }
+
+  /* ===== Navigation ===== */
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 12px 0;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-link {
+    white-space: nowrap;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-link:hover { background: var(--brand-light); color: var(--brand-primary); }
+  .nav-link.active { background: var(--brand-primary); color: #fff; }
+
+  /* ===== Main Layout ===== */
+  .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* ===== Section ===== */
+  .section { margin-bottom: 64px; }
+  .section-header {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--brand-primary);
+  }
+  .section-number {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brand-primary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+
+  /* ===== KPI Cards ===== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .kpi-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .kpi-card .kpi-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--brand-primary);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .kpi-card .kpi-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .kpi-card .kpi-note {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+
+  /* ===== Executive Summary Box ===== */
+  .exec-summary {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    padding: 36px;
+    box-shadow: var(--shadow-md);
+    border-left: 4px solid var(--brand-primary);
+    margin-bottom: 32px;
+  }
+  .exec-summary p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+  .exec-summary p:last-child { margin-bottom: 0; }
+  .exec-summary strong { color: var(--brand-primary); }
+
+  /* ===== Insight Callout ===== */
+  .insight-box {
+    background: var(--brand-light);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin: 24px 0;
+    border: 1px solid rgba(254,44,85,0.15);
+  }
+  .insight-box .insight-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand-primary);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+  .insight-box p {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.7;
+  }
+
+  /* ===== Content Card ===== */
+  .content-card {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .content-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .content-card h3 .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--brand-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .content-card p, .content-card li {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+  .content-card ul { padding-left: 20px; }
+  .content-card li { margin-bottom: 8px; }
+
+  /* ===== Table ===== */
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-white);
+    font-size: 13.5px;
+  }
+  thead th {
+    background: var(--bg-dark);
+    color: #fff;
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--text-primary);
+  }
+  tbody tr:hover { background: var(--brand-light); }
+  tbody tr:last-child td { border-bottom: none; }
+  .price-tag {
+    display: inline-block;
+    background: rgba(254,44,85,0.1);
+    color: var(--brand-primary);
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ===== Chart Container ===== */
+  .chart-container {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .chart-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .chart-canvas-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .chart-canvas-wrapper.wide { max-width: 700px; }
+  .chart-canvas-wrapper.full { max-width: 100%; }
+
+  /* ===== Playbook Cards ===== */
+  .playbook-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .playbook-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .playbook-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .playbook-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--brand-gradient);
+  }
+  .playbook-card .play-num {
+    font-size: 40px;
+    font-weight: 900;
+    color: rgba(254,44,85,0.1);
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    line-height: 1;
+  }
+  .playbook-card h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+  .playbook-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ===== Case Study Cards ===== */
+  .case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .case-card {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .case-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .case-card-header {
+    background: var(--brand-gradient);
+    padding: 20px 24px;
+    color: #fff;
+  }
+  .case-card-header .case-tag {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .case-card-header h4 {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .case-card-body {
+    padding: 20px 24px;
+  }
+  .case-card-body .case-item {
+    margin-bottom: 12px;
+  }
+  .case-card-body .case-item:last-child { margin-bottom: 0; }
+  .case-card-body .case-item .case-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .case-card-body .case-item p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ===== Comparison Table (Star Rating Visual) ===== */
+  .star-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .star-bar .bar {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--brand-gradient);
+    transition: width 0.6s ease;
+  }
+  .star-bar .bar.qq {
+    background: linear-gradient(135deg, #12b7f5, #3498db);
+  }
+  .star-bar .score {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 28px;
+  }
+
+  /* ===== Strategy Cards ===== */
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .strategy-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .strategy-card .from-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .strategy-card .from-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .strategy-card .to-label {
+    font-size: 11px;
+    color: var(--brand-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .strategy-card .to-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+  /* ===== Threat/Barrier Blocks ===== */
+  .highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .highlight-block {
+    border-radius: var(--radius-sm);
+    padding: 24px;
+  }
+  .highlight-block.barrier {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border: 1px solid rgba(76,175,80,0.2);
+  }
+  .highlight-block.threat {
+    background: linear-gradient(135deg, #fff3e0, #fbe9e7);
+    border: 1px solid rgba(255,152,0,0.2);
+  }
+  .highlight-block h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .highlight-block.barrier h4 { color: #2e7d32; }
+  .highlight-block.threat h4 { color: #e65100; }
+  .highlight-block li {
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  .highlight-block ul { padding-left: 18px; }
+
+  /* ===== Positioning Statement ===== */
+  .positioning-box {
+    background: var(--bg-dark);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .positioning-box .pos-label {
+    font-size: 11px;
+    color: var(--brand-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .positioning-box .pos-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .positioning-box .pos-text em {
+    color: var(--brand-primary);
+    font-style: normal;
+  }
+
+  /* ===== Three Pillars ===== */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 32px 0;
+  }
+  .pillar {
+    text-align: center;
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 28px 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .pillar .pillar-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  .pillar h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--brand-primary);
+    margin-bottom: 8px;
+  }
+  .pillar p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ===== Sales Script Box ===== */
+  .script-box {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+    border: 1px solid rgba(0,0,0,0.04);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .script-box .script-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .script-box .script-icon.client { background: #f0f0f5; }
+  .script-box .script-icon.us { background: var(--brand-light); }
+  .script-box .script-content .role {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .script-box .script-content .role.client-role { color: var(--text-tertiary); }
+  .script-box .script-content .role.our-role { color: var(--brand-primary); }
+  .script-box .script-content p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  /* ===== Footer ===== */
+  .report-footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 64px;
+  }
+  .report-footer a { color: var(--brand-primary); text-decoration: none; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .pillars { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .cover h1 { font-size: 32px; }
+    .main { padding: 24px 16px 60px; }
+    .section-title { font-size: 22px; }
+    .exec-summary { padding: 24px; }
+  }
+
+  /* ===== Flow Steps ===== */
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.04);
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--brand-primary);
+    font-weight: 700;
+    padding: 0 4px;
+  }
+
+  /* ===== User Profile Comparison ===== */
+  .profile-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .profile-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border-top: 3px solid;
+  }
+  .profile-card.douyin { border-color: var(--brand-primary); }
+  .profile-card.qq { border-color: #12b7f5; }
+  .profile-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .profile-card.douyin h4 { color: var(--brand-primary); }
+  .profile-card.qq h4 { color: #12b7f5; }
+  .profile-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 13px;
+  }
+  .profile-item:last-child { border-bottom: none; }
+  .profile-item .p-label { color: var(--text-tertiary); font-weight: 500; }
+  .profile-item .p-value { color: var(--text-primary); font-weight: 600; text-align: right; max-width: 60%; }
+
+  @media (max-width: 768px) {
+    .profile-compare { grid-template-columns: 1fr; }
+  }
+
+  /* ===== Print Styles ===== */
+  @media print {
+    .cover { min-height: auto; padding: 40px 24px; page-break-after: always; }
+    .cover::before { display: none; }
+    .nav-bar { display: none !important; }
+    .main { padding: 20px; }
+    .section { page-break-inside: avoid; margin-bottom: 32px; }
+    .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+    .case-grid, .playbook-grid, .strategy-grid, .highlight-grid { grid-template-columns: 1fr; }
+    .chart-container { page-break-inside: avoid; }
+    .content-card, .kpi-card { box-shadow: none; border: 1px solid #ddd; }
+    body { font-size: 12px; color: #000; background: #fff; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <div class="cover-content">
+    <div class="cover-badge">竞媒战略分析</div>
+    <h1><span>抖音</span>小游戏<br>营销生态深度调研</h1>
+    <p class="cover-subtitle">为QQ媒体 × 微信小游戏商业化团队提供竞品洞察与差异化策略参考</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">版本</div>
+        <div class="value">v1.0</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">更新日期</div>
+        <div class="value">2026-03-28</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">报告类型</div>
+        <div class="value">竞媒深度调研</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">平台</div>
+        <div class="value">抖音 / 字节跳动</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-link active" href="#exec">执行摘要</a>
+    <a class="nav-link" href="#overview">平台概况</a>
+    <a class="nav-link" href="#resources">营销资源</a>
+    <a class="nav-link" href="#playbook">核心打法</a>
+    <a class="nav-link" href="#users">用户画像</a>
+    <a class="nav-link" href="#compare">对比分析</a>
+    <a class="nav-link" href="#strategy">策略建议</a>
+  </div>
+</nav>
+
+<!-- ==================== MAIN ==================== -->
+<div class="main">
+
+  <!-- === Section 1: 执行摘要 === -->
+  <div class="section" id="exec">
+    <div class="section-header">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">执行摘要</h2>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value">7亿+</div>
+        <div class="kpi-label">日活跃用户（DAU）</div>
+        <div class="kpi-note">2025年数据，国内头部流量平台</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">360%</div>
+        <div class="kpi-label">游戏创作者增长率</div>
+        <div class="kpi-note">2025年同比增长</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">#1</div>
+        <div class="kpi-label">最强势竞争对手</div>
+        <div class="kpi-note">小游戏营销领域</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">双引擎</div>
+        <div class="kpi-label">内容 + 社交驱动</div>
+        <div class="kpi-note">增长飞轮核心壁垒</div>
+      </div>
+    </div>
+
+    <div class="exec-summary">
+      <p>抖音已成为当前小游戏营销领域<strong>最强势的竞争对手</strong>。依托字节跳动的内容推荐算法和庞大用户基数，抖音小游戏在2025-2026年经历了爆发式增长。其核心壁垒在于"内容+社交"双驱动的增长飞轮：内容创作者生态极度繁荣（2025年游戏内容创作者增长360%），社交裂变机制日渐成熟。</p>
+      <p><strong>对QQ的核心启示</strong>：抖音的内容营销方法论值得借鉴，但QQ拥有抖音不具备的<strong>深度社交关系链</strong>和<strong>年轻用户文化浓度</strong>，这是差异化切入的关键。</p>
+    </div>
+  </div>
+
+  <!-- === Section 2: 平台概况与流量生态 === -->
+  <div class="section" id="overview">
+    <div class="section-header">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">平台概况与流量生态</h2>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📍</span>平台定位</h3>
+      <ul>
+        <li><strong>核心定位</strong>：短视频+直播内容平台，正在从"娱乐消费"向"综合生态"转型</li>
+        <li><strong>DAU</strong>：约7亿+（2025年数据），国内头部流量平台</li>
+        <li><strong>小游戏生态定位</strong>：作为内容消费的延伸场景，小游戏承接短视频用户的碎片化娱乐需求</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎮</span>小游戏生态现状</h3>
+      <ul>
+        <li><strong>发展阶段</strong>：高速增长期，市场份额持续攀升</li>
+        <li><strong>核心引擎</strong>："手转小"（手游转小游戏）策略拉动行业增长，大量传统手游以小游戏形态进入抖音生态</li>
+        <li><strong>内容生态</strong>：游戏内容创作者2025年增长360%，形成了"短视频种草→小游戏体验→社交传播"的完整链路</li>
+        <li><strong>技术趋势</strong>：AI赋能开发（Vibe Coding），降低小游戏开发门槛，推动"全民化"开发浪潮</li>
+      </ul>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-label">核心增长链路</div>
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step">短视频种草</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">小游戏试玩</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">用户留存</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">社交传播</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">增长飞轮</div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🔀</span>流量分配机制</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>机制</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>算法推荐</strong></td><td>基于用户兴趣标签的个性化推荐，高效匹配游戏内容与目标用户</td></tr>
+            <tr><td><strong>内容分发</strong></td><td>短视频/直播为主要流量入口，游戏内容融入信息流自然分发</td></tr>
+            <tr><td><strong>社交裂变</strong></td><td>好友组队、挑战邀请、排行榜等社交机制驱动自然传播</td></tr>
+            <tr><td><strong>搜索入口</strong></td><td>搜索"小游戏"关键词直达小游戏中心</td></tr>
+            <tr><td><strong>侧边栏入口</strong></td><td>抖音App侧边栏有小游戏独立入口</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- === Section 3: 营销资源矩阵 === -->
+  <div class="section" id="resources">
+    <div class="section-header">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">小游戏营销资源矩阵</h2>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📊</span>广告产品全景</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>广告产品</th><th>形式</th><th>特点</th><th>参考价格</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>开屏广告</strong></td><td>全屏展示（图片/视频）</td><td>超强曝光，适合品牌认知</td><td><span class="price-tag">CPT 百万级/天</span></td></tr>
+            <tr><td><strong>信息流广告</strong></td><td>原生视频广告</td><td>融入内容流，接受度高</td><td><span class="price-tag">CPM 30-80元</span></td></tr>
+            <tr><td><strong>搜索广告</strong></td><td>关键词竞价</td><td>承接主动搜索意图</td><td><span class="price-tag">CPC 1-5元</span></td></tr>
+            <tr><td><strong>巨量星图</strong></td><td>达人合作内容</td><td>KOL种草，强信任背书</td><td><span class="price-tag">按达人等级</span></td></tr>
+            <tr><td><strong>直播推广</strong></td><td>直播间引流/互动</td><td>实时转化，强互动</td><td><span class="price-tag">按效果计费</span></td></tr>
+            <tr><td><strong>激励视频</strong></td><td>看广告获奖励</td><td>高完播率，适合游戏品类</td><td><span class="price-tag">eCPM 50-150元</span></td></tr>
+            <tr><td><strong>品牌挑战赛</strong></td><td>话题+任务+UGC</td><td>社交裂变，大规模曝光</td><td><span class="price-tag">定制 50万+</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 广告价格对比图 -->
+    <div class="chart-container">
+      <div class="chart-title">广告产品 CPM/eCPM 价格区间对比</div>
+      <div class="chart-canvas-wrapper wide">
+        <canvas id="priceChart"></canvas>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💡</span>创新营销产品</h3>
+      <ul>
+        <li><strong>游戏试玩广告（Playable Ads）</strong>：在信息流中嵌入可试玩的小游戏demo，用户无需跳转即可体验</li>
+        <li><strong>达人直播+小游戏</strong>：达人在直播间直接开玩小游戏，观众实时参与，实现"看+玩"一体化</li>
+        <li><strong>节日营销IP</strong>：字节系节日营销IP（如抖音年货节、暑期嘉年华），小游戏可作为互动环节嵌入</li>
+      </ul>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value">300元</div>
+        <div class="kpi-label">效果投放最低日预算</div>
+        <div class="kpi-note">门槛较低</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">50万+</div>
+        <div class="kpi-label">品牌类资源起步价</div>
+        <div class="kpi-note">挑战赛、开屏等</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">灵活</div>
+        <div class="kpi-label">达人合作门槛</div>
+        <div class="kpi-note">通过巨量星图平台</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === Section 4: 核心打法与案例 === -->
+  <div class="section" id="playbook">
+    <div class="section-header">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">核心打法与成功案例</h2>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-label">方法论来源</div>
+      <p>核心打法归纳自《2026抖音小游戏行业白皮书》（极光月狐 × 抖音小游戏联合发布，2026年3月）</p>
+    </div>
+
+    <div class="playbook-grid">
+      <div class="playbook-card">
+        <span class="play-num">01</span>
+        <h4>内容驱动增长</h4>
+        <p>游戏内容创作者生态极度繁荣，官号直播、组队带玩、Boss战挑战等内容模式实现高效转化。"内容种草→试玩→留存→社交传播"形成增长闭环。</p>
+      </div>
+      <div class="playbook-card">
+        <span class="play-num">02</span>
+        <h4>社交裂变获客</h4>
+        <p>利用抖音社交关系（虽非熟人关系链，但互动频次高）驱动传播。排行榜、组队、挑战等社交机制设计有效拉动新增。</p>
+      </div>
+      <div class="playbook-card">
+        <span class="play-num">03</span>
+        <h4>全域经营（字节生态）</h4>
+        <p>打通抖音、今日头条、番茄小说等多端流量，节日营销IP打破增长瓶颈，实现跨端用户触达。</p>
+      </div>
+      <div class="playbook-card">
+        <span class="play-num">04</span>
+        <h4>手转小（手游→小游戏）</h4>
+        <p>成熟手游以小游戏形态低门槛获客，小游戏作为手游的"试玩场"，高效转化付费用户。</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:20px; font-weight:700; margin-bottom:20px; color:var(--text-primary);">代表性案例</h3>
+    <div class="case-grid">
+      <div class="case-card">
+        <div class="case-card-header">
+          <div class="case-tag">案例 01</div>
+          <h4>休闲游戏 × 达人种草</h4>
+        </div>
+        <div class="case-card-body">
+          <div class="case-item">
+            <div class="case-label">模式</div>
+            <p>邀请20+游戏达人制作"挑战XX关"短视频，引导试玩</p>
+          </div>
+          <div class="case-item">
+            <div class="case-label">效果</div>
+            <p>视频播放量超<strong>5000万</strong>，次留提升约<strong>20%</strong></p>
+          </div>
+          <div class="case-item">
+            <div class="case-label">亮点</div>
+            <p>通过"挑战"机制自然引发用户UGC，实现二次传播</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-card-header">
+          <div class="case-tag">案例 02</div>
+          <h4>SLG × 直播组队带玩</h4>
+        </div>
+        <div class="case-card-body">
+          <div class="case-item">
+            <div class="case-label">模式</div>
+            <p>头部游戏达人直播开玩SLG小游戏，观众实时加入</p>
+          </div>
+          <div class="case-item">
+            <div class="case-label">效果</div>
+            <p>直播间观众转化率<strong>显著高于</strong>信息流广告</p>
+          </div>
+          <div class="case-item">
+            <div class="case-label">亮点</div>
+            <p>"看别人玩→自己想玩→加入组队"链路流畅</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-card-header">
+          <div class="case-tag">案例 03</div>
+          <h4>品牌挑战赛 × 小游戏联动</h4>
+        </div>
+        <div class="case-card-body">
+          <div class="case-item">
+            <div class="case-label">模式</div>
+            <p>品牌发起话题挑战赛，嵌入小游戏互动环节</p>
+          </div>
+          <div class="case-item">
+            <div class="case-label">效果</div>
+            <p>话题参与量<strong>亿级</strong>，品牌曝光+游戏下载双赢</p>
+          </div>
+          <div class="case-item">
+            <div class="case-label">亮点</div>
+            <p>品效合一，品牌调性与游戏玩法深度融合</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === Section 5: 用户画像 === -->
+  <div class="section" id="users">
+    <div class="section-header">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">用户画像与行为特征</h2>
+    </div>
+
+    <div class="profile-compare">
+      <div class="profile-card douyin">
+        <h4>🎵 抖音小游戏用户</h4>
+        <div class="profile-item"><span class="p-label">年龄分布</span><span class="p-value">18-40岁，泛年龄段覆盖</span></div>
+        <div class="profile-item"><span class="p-label">性别比例</span><span class="p-value">男女较均衡</span></div>
+        <div class="profile-item"><span class="p-label">城市分布</span><span class="p-value">全线城市，下沉渗透强</span></div>
+        <div class="profile-item"><span class="p-label">使用场景</span><span class="p-value">碎片化娱乐，"刷到就玩"</span></div>
+        <div class="profile-item"><span class="p-label">消费特征</span><span class="p-value">冲动消费，快速决策</span></div>
+        <div class="profile-item"><span class="p-label">内容偏好</span><span class="p-value">短视频/直播/视觉冲击型</span></div>
+      </div>
+      <div class="profile-card qq">
+        <h4>🐧 QQ 用户</h4>
+        <div class="profile-item"><span class="p-label">年龄分布</span><span class="p-value">15-25岁，年轻用户浓度极高</span></div>
+        <div class="profile-item"><span class="p-label">性别比例</span><span class="p-value">略偏男性，年轻女性也不低</span></div>
+        <div class="profile-item"><span class="p-label">城市分布</span><span class="p-value">一二线为主，学生群体高</span></div>
+        <div class="profile-item"><span class="p-label">使用场景</span><span class="p-value">社交场景，"和朋友一起玩"</span></div>
+        <div class="profile-item"><span class="p-label">消费特征</span><span class="p-value">社交驱动消费，圈层影响大</span></div>
+        <div class="profile-item"><span class="p-label">内容偏好</span><span class="p-value">二次元/潮流/社交互动</span></div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-label">行为差异核心洞察</div>
+      <p><strong>抖音用户</strong>：被动接收推荐，"刷到→试玩→离开/留存"，用户粘性取决于内容质量。</p>
+      <p><strong>QQ用户</strong>：主动社交场景中接触游戏，"朋友推荐→一起玩→持续互动"，社交绑定提升留存。</p>
+    </div>
+  </div>
+
+  <!-- === Section 6: 差异化对比分析 === -->
+  <div class="section" id="compare">
+    <div class="section-header">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">vs QQ 差异化对比分析</h2>
+    </div>
+
+    <!-- 雷达图 -->
+    <div class="chart-container">
+      <div class="chart-title">抖音 vs QQ 多维度能力对比</div>
+      <div class="chart-canvas-wrapper">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 对比条形图 -->
+    <div class="content-card">
+      <h3><span class="icon">📊</span>优劣势量化对比</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th style="width:16%">维度</th><th style="width:28%">抖音</th><th style="width:28%">QQ</th><th style="width:28%">QQ的差异化机会</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>流量规模</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:100px"></div><span class="score">5/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:60px"></div><span class="score">3/5</span></div></td>
+              <td>QQ需在精准度上弥补规模差距</td>
+            </tr>
+            <tr>
+              <td><strong>内容生态</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:100px"></div><span class="score">5/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:40px"></div><span class="score">2/5</span></div></td>
+              <td>QQ可围绕社交场景做轻量内容</td>
+            </tr>
+            <tr>
+              <td><strong>社交深度</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:40px"></div><span class="score">2/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:100px"></div><span class="score">5/5</span></div></td>
+              <td>QQ的社交关系链是核心壁垒</td>
+            </tr>
+            <tr>
+              <td><strong>年轻用户</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:60px"></div><span class="score">3/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:100px"></div><span class="score">5/5</span></div></td>
+              <td>QQ对Z世代的覆盖是独特优势</td>
+            </tr>
+            <tr>
+              <td><strong>文化基因</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:60px"></div><span class="score">3/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:80px"></div><span class="score">4/5</span></div></td>
+              <td>QQ的亚文化基因适合游戏品类</td>
+            </tr>
+            <tr>
+              <td><strong>转化效率</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:80px"></div><span class="score">4/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:60px"></div><span class="score">3/5</span></div></td>
+              <td>QQ社交推荐的信任度更高</td>
+            </tr>
+            <tr>
+              <td><strong>品效合一</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:80px"></div><span class="score">4/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:60px"></div><span class="score">3/5</span></div></td>
+              <td>QQ需加速品效产品建设</td>
+            </tr>
+            <tr>
+              <td><strong>数据能力</strong></td>
+              <td><div class="star-bar"><div class="bar" style="width:100px"></div><span class="score">5/5</span></div></td>
+              <td><div class="star-bar"><div class="bar qq" style="width:80px"></div><span class="score">4/5</span></div></td>
+              <td>QQ的社交图谱是差异化数据资产</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="highlight-grid">
+      <div class="highlight-block barrier">
+        <h4>🛡️ QQ的独特壁垒</h4>
+        <ul>
+          <li><strong>熟人社交关系链</strong>：抖音的社交是"刷到→互动"的弱关系，QQ是"同学/朋友→一起玩"的强关系，社交推荐的信任度和转化率更高</li>
+          <li><strong>Z世代核心阵地</strong>：QQ对15-25岁年轻用户的覆盖密度远超抖音，对于瞄准年轻用户的游戏，QQ是不可替代的触达渠道</li>
+          <li><strong>游戏文化基因</strong>：QQ本身就有深厚的游戏基因（QQ游戏大厅、QQ空间小游戏），用户对"在QQ上玩游戏"有天然认知</li>
+        </ul>
+      </div>
+      <div class="highlight-block threat">
+        <h4>⚠️ 抖音的威胁</h4>
+        <ul>
+          <li><strong>内容生态虹吸效应</strong>：创作者和用户向抖音内容生态迁移，小游戏客户也跟随流量走</li>
+          <li><strong>营销标准化</strong>：巨量引擎提供了高度标准化的投放工具，降低了客户的操作门槛</li>
+          <li><strong>"手转小"趋势</strong>：大量手游以小游戏形态进入抖音，抢占了小游戏营销预算</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- === Section 7: 策略建议 === -->
+  <div class="section" id="strategy">
+    <div class="section-header">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">可借鉴策略与QQ卡位建议</h2>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🔄</span>可直接借鉴的成熟打法</h3>
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <div class="from-label">抖音打法</div>
+          <div class="from-text">达人种草内容</div>
+          <div class="to-label">QQ 适配方案</div>
+          <div class="to-text">在QQ空间/QQ看点引入游戏KOL内容种草，利用QQ的社交传播放大效果</div>
+        </div>
+        <div class="strategy-card">
+          <div class="from-label">抖音打法</div>
+          <div class="from-text">试玩广告</div>
+          <div class="to-label">QQ 适配方案</div>
+          <div class="to-text">QQ信息流中嵌入小游戏试玩，利用社交推荐提升试玩率</div>
+        </div>
+        <div class="strategy-card">
+          <div class="from-label">抖音打法</div>
+          <div class="from-text">节日营销IP</div>
+          <div class="to-label">QQ 适配方案</div>
+          <div class="to-text">QQ自有IP活动（如QQ空间年度总结、QQ音乐节等）与小游戏联动</div>
+        </div>
+        <div class="strategy-card">
+          <div class="from-label">抖音打法</div>
+          <div class="from-text">品牌挑战赛</div>
+          <div class="to-label">QQ 适配方案</div>
+          <div class="to-text">改造为"QQ社交挑战赛"——利用好友关系链驱动挑战传播</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🔀</span>需要差异化调整的策略</h3>
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <div class="from-label">抖音策略</div>
+          <div class="from-text">算法推荐为主</div>
+          <div class="to-label">QQ 差异化调整</div>
+          <div class="to-text">QQ应以社交推荐为主，"你的好友在玩XX"比算法推荐更有说服力</div>
+        </div>
+        <div class="strategy-card">
+          <div class="from-label">抖音策略</div>
+          <div class="from-text">短视频种草链路</div>
+          <div class="to-label">QQ 差异化调整</div>
+          <div class="to-text">QQ可做社交圈种草——QQ空间动态、班级群/兴趣群中的游戏推荐</div>
+        </div>
+        <div class="strategy-card">
+          <div class="from-label">抖音策略</div>
+          <div class="from-text">泛年龄段覆盖</div>
+          <div class="to-label">QQ 差异化调整</div>
+          <div class="to-text">QQ应聚焦Z世代专属定位，做深年轻用户，而非追求泛人群</div>
+        </div>
+        <div class="strategy-card">
+          <div class="from-label">抖音策略</div>
+          <div class="from-text">达人直播带玩</div>
+          <div class="to-label">QQ 差异化调整</div>
+          <div class="to-text">QQ可做好友组局模式——不依赖达人，而是好友之间的组队邀请</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 核心卡位 -->
+    <div class="positioning-box">
+      <div class="pos-label">核心卡位</div>
+      <p class="pos-text">做小游戏营销领域的<em>"社交关系链引擎"</em><br>——当客户需要"社交裂变+年轻用户精准触达"时，QQ是<em>第一选择</em></p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-icon">🎯</div>
+        <h4>最年轻</h4>
+        <p>QQ是中国互联网唯一以15-25岁为核心的社交平台</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">🤝</div>
+        <h4>最社交</h4>
+        <p>熟人关系链驱动的社交裂变，转化信任度远超算法推荐</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">🎮</div>
+        <h4>最游戏</h4>
+        <p>QQ天然的游戏基因，用户对"在QQ上玩游戏"有心智</p>
+      </div>
+    </div>
+
+    <!-- 销售话术 -->
+    <div class="content-card">
+      <h3><span class="icon">💬</span>销售话术参考</h3>
+      <div class="script-box">
+        <div class="script-icon client">🙋</div>
+        <div class="script-content">
+          <div class="role client-role">客户说</div>
+          <p>"我们已经在抖音投了不少预算了，效果还行。"</p>
+        </div>
+      </div>
+      <div class="script-box">
+        <div class="script-icon us">💡</div>
+        <div class="script-content">
+          <div class="role our-role">QQ回应</div>
+          <p>"抖音帮你做内容曝光和泛人群触达，QQ帮你做社交裂变和年轻用户深度运营。抖音是'让用户刷到你的游戏'，QQ是'让用户的朋友拉他一起玩你的游戏'——两者结合，品效才能真正打通。"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === 附录 === -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">附录</div>
+      <h2 class="section-title">数据来源与更新计划</h2>
+    </div>
+    <div class="content-card">
+      <h3><span class="icon">📚</span>数据来源</h3>
+      <ul>
+        <li>《2026抖音小游戏行业白皮书》（极光月狐 × 抖音小游戏联合发布，2026年3月）</li>
+        <li>巨量引擎官方营销资源手册</li>
+        <li>行业公开报道（GameLook、游戏葡萄等）</li>
+        <li>团队内部调研与经验总结</li>
+      </ul>
+    </div>
+    <div class="content-card">
+      <h3><span class="icon">🔄</span>更新计划</h3>
+      <ul>
+        <li><strong>下次更新</strong>：2026年Q2末</li>
+        <li><strong>重点关注</strong>：抖音小游戏商业化政策变化、新营销产品上线、"手转小"趋势演进</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="report-footer">
+  <p>QQ媒体 × 微信小游戏 | 竞媒战略分析系列 | 机密材料，仅供内部使用</p>
+  <p style="margin-top:8px">© 2026 QQ商业化团队</p>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+// === Navigation Active State ===
+const navLinks = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('.section[id]');
+
+const observerOptions = { rootMargin: '-20% 0px -70% 0px' };
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (activeLink) activeLink.classList.add('active');
+    }
+  });
+}, observerOptions);
+sections.forEach(section => observer.observe(section));
+
+// === Chart 1: Ad Price Range (Horizontal Bar) ===
+new Chart(document.getElementById('priceChart'), {
+  type: 'bar',
+  data: {
+    labels: ['开屏广告 (CPT)', '信息流 (CPM)', '激励视频 (eCPM)', '品牌挑战赛', '搜索广告 (CPC)'],
+    datasets: [
+      {
+        label: '价格下限',
+        data: [1000000, 30, 50, 500000, 1],
+        backgroundColor: 'rgba(254,44,85,0.2)',
+        borderColor: 'rgba(254,44,85,0.6)',
+        borderWidth: 1,
+      },
+      {
+        label: '价格上限',
+        data: [2000000, 80, 150, 1000000, 5],
+        backgroundColor: 'rgba(254,44,85,0.6)',
+        borderColor: 'rgba(254,44,85,1)',
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { display: true, position: 'bottom', labels: { font: { size: 12 }, usePointStyle: true } },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const v = ctx.raw;
+            if (v >= 10000) return ctx.dataset.label + ': ' + (v/10000).toFixed(0) + '万元';
+            return ctx.dataset.label + ': ' + v + '元';
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        type: 'logarithmic',
+        title: { display: true, text: '价格（元）· 对数轴', font: { size: 11 } },
+        ticks: {
+          callback: function(v) {
+            if (v >= 10000) return (v/10000) + '万';
+            return v;
+          }
+        },
+        grid: { color: 'rgba(0,0,0,0.04)' }
+      },
+      y: {
+        ticks: { font: { size: 12, weight: '600' } },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+// === Chart 2: Radar (抖音 vs QQ) ===
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['流量规模', '内容生态', '社交深度', '年轻用户', '文化基因', '转化效率', '品效合一', '数据能力'],
+    datasets: [
+      {
+        label: '抖音',
+        data: [5, 5, 2, 3, 3, 4, 4, 5],
+        backgroundColor: 'rgba(254,44,85,0.15)',
+        borderColor: '#fe2c55',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        pointBackgroundColor: '#fe2c55',
+      },
+      {
+        label: 'QQ',
+        data: [3, 2, 5, 5, 4, 3, 3, 4],
+        backgroundColor: 'rgba(18,183,245,0.15)',
+        borderColor: '#12b7f5',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        pointBackgroundColor: '#12b7f5',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 13, weight: '600' }, usePointStyle: true, padding: 20 } }
+    },
+    scales: {
+      r: {
+        min: 0,
+        max: 5,
+        ticks: { stepSize: 1, font: { size: 10 }, backdropColor: 'transparent' },
+        pointLabels: { font: { size: 12, weight: '600' }, color: '#1d1d1f' },
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        angleLines: { color: 'rgba(0,0,0,0.06)' }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
