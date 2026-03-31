@@ -51,15 +51,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 
 /* Funnel Visualization */
 .funnel-container { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 32px 0; }
-.funnel-stage { display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; font-weight: 600; transition: transform 0.2s; position: relative; padding: 18px 24px; }
+.funnel-stage { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; text-align: center; color: #fff; font-weight: 600; transition: transform 0.2s; position: relative; padding: 20px 24px; min-height: 56px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .funnel-stage:hover { transform: scale(1.02); }
-.funnel-stage:nth-child(1) { background: var(--module-gradient); width: 90%; border-radius: 16px 16px 0 0; font-size: 16px; }
-.funnel-stage:nth-child(2) { background: linear-gradient(135deg, #6B7FFF, #8B9FFF); width: 78%; font-size: 15px; }
-.funnel-stage:nth-child(3) { background: linear-gradient(135deg, #8B5CF6, #A07DFF); width: 66%; font-size: 14px; }
-.funnel-stage:nth-child(4) { background: linear-gradient(135deg, #EC4899, #F472B6); width: 54%; font-size: 14px; }
-.funnel-stage:nth-child(5) { background: linear-gradient(135deg, #FFB800, #FFCC40); width: 42%; border-radius: 0 0 16px 16px; font-size: 15px; color: #1a1a2e; }
-.funnel-arrow { color: var(--module-color); font-size: 20px; margin: 4px 0; opacity: 0.5; }
-.funnel-desc { font-size: 12px; font-weight: 400; opacity: 0.85; display: block; margin-top: 2px; }
+.funnel-stage.fs1 { background: var(--module-gradient); width: 90%; border-radius: 16px 16px 0 0; font-size: 16px; min-height: 64px; }
+.funnel-stage.fs2 { background: linear-gradient(135deg, #6B7FFF, #8B9FFF); width: 78%; font-size: 15px; }
+.funnel-stage.fs3 { background: linear-gradient(135deg, #8B5CF6, #A07DFF); width: 66%; font-size: 14px; }
+.funnel-stage.fs4 { background: linear-gradient(135deg, #EC4899, #F472B6); width: 54%; font-size: 14px; }
+.funnel-stage.fs5 { background: linear-gradient(135deg, #FFB800, #FFCC40); width: 42%; border-radius: 0 0 16px 16px; font-size: 15px; color: #1a1a2e; font-weight: 700; min-height: 64px; }
+.funnel-arrow { color: var(--module-color); font-size: 22px; margin: 6px 0; opacity: 0.6; }
+.funnel-desc { font-size: 12px; font-weight: 400; opacity: 0.85; display: block; margin-top: 4px; }
 
 /* Scoring Table */
 .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
@@ -162,15 +162,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
       <h2 class="section-title">四层筛选漏斗模型</h2>
     </div>
     <div class="funnel-container">
-      <div class="funnel-stage">🌊 候选池<span class="funnel-desc">微信小游戏畅销/飙升榜 + 情报雷达发现 + 历史客户库</span></div>
+      <div class="funnel-stage fs1">🌊 候选池<span class="funnel-desc">微信小游戏畅销/飙升榜 + 情报雷达发现 + 历史客户库</span></div>
       <div class="funnel-arrow">▼</div>
-      <div class="funnel-stage">第一层：基础过滤<span class="funnel-desc">DAU ≥ 50万 | 上线 ≥ 3个月 | 品类白名单</span></div>
+      <div class="funnel-stage fs2">第一层：基础过滤<span class="funnel-desc">DAU ≥ 50万 | 上线 ≥ 3个月 | 品类白名单</span></div>
       <div class="funnel-arrow">▼</div>
-      <div class="funnel-stage">第二层：商业化评估<span class="funnel-desc">IAA收入规模 | 已有投放行为 | 变现模式成熟度</span></div>
+      <div class="funnel-stage fs3">第二层：商业化评估<span class="funnel-desc">IAA收入规模 | 已有投放行为 | 变现模式成熟度</span></div>
       <div class="funnel-arrow">▼</div>
-      <div class="funnel-stage">第三层：QQ契合度<span class="funnel-desc">年轻用户占比 | 内容调性匹配 | IP/社交属性</span></div>
+      <div class="funnel-stage fs4">第三层：QQ契合度<span class="funnel-desc">用户画像 | 内容调性 | IP/社交</span></div>
       <div class="funnel-arrow">▼</div>
-      <div class="funnel-stage">🎯 S/A/B/C 四档客户池<span class="funnel-desc">预算意愿 | 历史投放 | 品牌投放意向 | 竞媒活跃度</span></div>
+      <div class="funnel-stage fs5">🎯 S/A/B/C 四档客户池<span class="funnel-desc">预算意愿 | 品牌投放意向 | 竞媒活跃度</span></div>
     </div>
   </section>
 

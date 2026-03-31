@@ -46,14 +46,14 @@ body {
 
 /* ===== Cover ===== */
 .cover {
-  min-height: 100vh;
+  min-height: auto;
   background: linear-gradient(135deg, #0B8AD9 0%, #12B7F5 20%, #3A7BF5 45%, #5B6FFF 70%, #7C5CF6 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 60px 24px;
+  padding: 40px 24px 32px;
   position: relative;
   overflow: hidden;
 }
@@ -72,7 +72,7 @@ body {
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 120px;
+  height: 40px;
   background: linear-gradient(to top, rgba(91,111,255,0.3), transparent);
   z-index: 0;
 }
@@ -94,7 +94,7 @@ body {
   position: absolute;
   right: 3%;
   bottom: 5%;
-  width: 280px;
+  width: 160px;
   height: auto;
   opacity: 0.18;
   filter: drop-shadow(0 0 40px rgba(255,255,255,0.15));
@@ -168,22 +168,22 @@ body {
   display: inline-block;
   background: rgba(255,255,255,0.15);
   color: #fff;
-  padding: 8px 24px;
+  padding: 6px 18px;
   border-radius: 100px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
-  margin-bottom: 36px;
+  margin-bottom: 14px;
   border: 1px solid rgba(255,255,255,0.25);
   backdrop-filter: blur(8px);
 }
 .cover h1 {
-  font-size: clamp(36px, 5.5vw, 60px);
+  font-size: clamp(24px, 3.5vw, 36px);
   font-weight: 800;
   color: #fff;
   line-height: 1.2;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   letter-spacing: -1px;
 }
 .cover h1 .gradient-text {
@@ -193,26 +193,26 @@ body {
   background-clip: text;
 }
 .cover-subtitle {
-  font-size: 18px;
+  font-size: 14px;
   color: rgba(255,255,255,0.55);
-  margin-bottom: 48px;
-  line-height: 1.7;
+  margin-bottom: 20px;
+  line-height: 1.6;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }
 .cover-stats {
   display: flex;
-  gap: 48px;
+  gap: 28px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 48px;
+  margin-bottom: 16px;
 }
 .cover-stat {
   text-align: center;
 }
 .cover-stat .num {
-  font-size: 40px;
+  font-size: 24px;
   font-weight: 800;
   color: #fff;
   line-height: 1.1;
@@ -225,19 +225,7 @@ body {
   margin-top: 4px;
 }
 .cover-scroll-hint {
-  position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255,255,255,0.3);
-  font-size: 12px;
-  letter-spacing: 2px;
-  animation: scrollBounce 2s infinite;
+  display: none;
 }
 .scroll-arrow {
   width: 24px; height: 24px;
