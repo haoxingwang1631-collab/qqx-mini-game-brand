@@ -650,6 +650,50 @@ body {
   color: #fff;
 }
 
+/* ===== AI 赋能亮点区域 ===== */
+.ai-boost {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #EEF2FF, #F0FDFA);
+  border: 1px solid rgba(18,183,245,0.12);
+  position: relative;
+}
+.ai-boost-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #8B5CF6, #12B7F5);
+  padding: 2px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.ai-boost-text {
+  font-size: 12px;
+  color: #4338CA;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.ai-boost-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(18,183,245,0.12));
+  color: #7C3AED;
+}
+.ai-boost-metric .metric-up {
+  color: #059669;
+}
+
 /* ===== Rhythm Table ===== */
 .rhythm-table-wrap {
   background: var(--bg-white);
@@ -1051,8 +1095,8 @@ body {
   <section class="section fade-up" id="modules">
     <div class="section-header">
       <div class="section-badge">Module Details</div>
-      <h2 class="section-title">八大核心模块</h2>
-      <p class="section-desc">每个模块均支持在线查看执行步骤、模板数据和关键产出物</p>
+      <h2 class="section-title">八大核心模块 · AI 赋能</h2>
+      <p class="section-desc">每个模块均深度融入 AI 能力，将 2-3 人团队的产出提升至 5-8 人团队水平</p>
     </div>
     <div class="modules-grid">
       <!-- M1 -->
@@ -1065,6 +1109,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">持续追踪微信小游戏行业动态，第一时间捕捉营销创新玩法和高潜客户信号</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 自动抓取 20+ 信息源，智能筛选去重，一键生成结构化情报周报和企微快报</div>
+          <div class="ai-boost-metric">⏱️ 情报采集 <span class="metric-up">4h→30min</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">情报周报</span>
           <span class="module-kpi-tag">企微快报</span>
@@ -1085,6 +1134,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">四层筛选漏斗模型，从微信小游戏生态中系统性筛选出高商业化潜力的目标客户</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 自动采集榜单数据，智能评分四维加权，客户分档 S/A/B/C 一键输出</div>
+          <div class="ai-boost-metric">⏱️ 客户筛选 <span class="metric-up">1天→1小时</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">四层漏斗筛选</span>
           <span class="module-kpi-tag">S/A/B/C分档</span>
@@ -1105,6 +1159,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">系统性分析抖音/小红书/快手/支付宝的小游戏营销生态，提炼QQ差异化卖点</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 深度调研竞品生态，自动生成战略级分析报告，含数据图表和差异化话术</div>
+          <div class="ai-boost-metric">⏱️ 调研报告 <span class="metric-up">2周→2小时</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">4份竞媒报告</span>
           <span class="module-kpi-tag">差异化卖点≥5</span>
@@ -1125,6 +1184,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">快速产出高质量营销方案，支持通用版+休闲/SLG/模拟经营3个品类定制版</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 根据客户画像自动匹配方案模板，智能填充数据洞察、创意玩法和销售话术</div>
+          <div class="ai-boost-metric">⏱️ 方案产出 <span class="metric-up">3天→3小时</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">通用+3品类方案</span>
           <span class="module-kpi-tag">销售话术库</span>
@@ -1145,6 +1209,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">全生命周期管理每一条商机，从初步接触到签约结项，确保无遗漏、可追溯</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 自动提取腾讯会议纪要，结构化输出客户需求、意向评级和 To-Do，零遗漏</div>
+          <div class="ai-boost-metric">⏱️ 纪要整理 <span class="metric-up">30min→5min</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">7阶段管道</span>
           <span class="module-kpi-tag">AI纪要提取</span>
@@ -1165,6 +1234,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">曝光→互动→转化→ROI全链路数据回收与分析，系统性评估投放效果</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 自动拉取投放数据，智能归因分析，一键生成含图表的复盘报告和优化建议</div>
+          <div class="ai-boost-metric">⏱️ 复盘报告 <span class="metric-up">2天→2小时</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">全链路指标</span>
           <span class="module-kpi-tag">复盘覆盖率100%</span>
@@ -1185,6 +1259,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">基于投放效果和客户价值进行S/A/B/C分层管理，制定差异化续投策略</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 综合投放数据+客户行为自动评估价值分层，智能推荐差异化续投策略和触达计划</div>
+          <div class="ai-boost-metric">⏱️ 分层更新 <span class="metric-up">1天→20min</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">四层价值分层</span>
           <span class="module-kpi-tag">S级续投率≥60%</span>
@@ -1205,6 +1284,11 @@ body {
           </div>
         </div>
         <div class="module-card-desc">将成功合作案例结构化归档，形成可复用的案例库，反哺方案输出和情报分析</div>
+        <div class="ai-boost">
+          <div class="ai-boost-label">🤖 AI 赋能</div>
+          <div class="ai-boost-text">AI 自动从复盘数据中提炼案例亮点，结构化归档并生成可直接引用的案例卡片</div>
+          <div class="ai-boost-metric">⏱️ 案例归档 <span class="metric-up">半天→30min</span></div>
+        </div>
         <div class="module-card-kpis">
           <span class="module-kpi-tag">100%入库</span>
           <span class="module-kpi-tag">季度净增≥3</span>
